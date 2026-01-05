@@ -185,69 +185,6 @@ def collect_subcategories(exclude_subcats, driver) -> List[Tuple[str, str]]:
     print(f"🔗 subcategories: {uniq}")
     return uniq
 
-# def collect_subcategories(exclude_subcats, driver) -> List[Tuple[str, str]]:
-#     """
-#     탭 컨테이너(data-mds=TabText) 안의 2뎁스 세부카테고리만 수집.
-#     '전체' 및 data-category-id == main_cat_name_CODE(001) 제외.
-#     return: [(category_id, category_name)]
-#     """
-#     def _norm(s: str) -> str:
-#         s = (s or "").strip()
-#         return re.sub(r"\s+", " ", s)
-
-#     subs: List[Tuple[str, str]] = []
-
-#     try:
-#         # 탭 컨테이너가 렌더될 때까지 대기
-#         WebDriverWait(driver, 8).until(
-#             EC.presence_of_element_located((By.CSS_SELECTOR, '[data-mds="TabText"]'))
-#         )
-#         # 탭 컨테이너 내부의 카테고리 탭만 대상
-#         nodes = driver.find_elements(
-#             By.CSS_SELECTOR,
-#             '[data-mds="TabText"] [data-button-id="category"]'
-#         )
-#         for n in nodes:
-#             cid = (n.get_attribute("data-category-id") or "").strip()
-#             cname_full = (n.get_attribute("data-category-name") or "").strip()
-#             if '|' in cname_full:
-#                 cname = cname_full.split("|"[-1])
-#             else:
-#                 cname = cname_full
-                
-#             if not cname:
-#                 cname = _norm(n.text)
-
-#             # '전체'(텍스트) 제외 + '001'(루트 코드) 제외
-#             if not cid or cid == main_cat_id or cname == "전체":
-#                 continue
-
-#             # 6자리 카테고리 ID만 허용
-#             if not re.fullmatch(r"\d{6}", cid):
-#                 continue
-            
-#             # ✅ 제외 목록 체크
-#             exclude_ids = exclude_subcats.get('ids', [])
-#             exclude_names = exclude_subcats.get('names', [])
-            
-#             if cid in exclude_ids or cname in exclude_names:
-#                 print(f"🙅 제외: {cid} {cname}")
-#                 continue
-
-#             subs.append((cid, cname))
-
-#     except Exception:
-#         pass
-
-#     # 중복 제거(순서 보존)
-#     uniq, seen = [], set()
-#     for cid, cname in subs:
-#         key = f"{cid}|{cname}"
-#         if key not in seen:
-#             seen.add(key); uniq.append((cid, cname))
-#     print(f"🔗 subcategories: {uniq}")
-#     return uniq
-
 def click_subcategory(driver, cat_id: str, timeout: float = 6.0) -> bool:
     """
     세부카테고리 탭(data-category-id=cat_id)을 클릭하고 활성화(aria-current=true)될 때까지 대기.
@@ -486,18 +423,6 @@ def run_one_category(sub_cat_id: str, gf: str, style_id: int, texture_id: str, p
             if not ok:
                 print("❌ 세부 카테고리 탭 클릭 실패")
                 return []
-                # 실패 시 URL 파라미터로 다시 진입 (폴백), 그 후 다시 클릭 시도
-            #     driver.get(build_category_url(gf, style_id, sub_cat_id))
-            #     WebDriverWait(driver, 8).until(
-            #         EC.presence_of_element_located((By.CSS_SELECTOR, 'a.gtm-select-item[href*="/products/"]'))
-            #     )
-            #     re_ok = click_subcategory(driver, sub_cat_id)
-            #     if not re_ok:
-            #         print("❌❌ 정말 실패")
-            #     else:
-            #         print("✅ 세부 카테고리 탭 클릭 성공")
-            # else:
-            #     print("✅ 세부 카테고리 탭 클릭 성공")
 
         # 3) 이제 리스트 수집
         minimal = collect_list_minimals_unique(driver, need=NUM_COLLECT)
