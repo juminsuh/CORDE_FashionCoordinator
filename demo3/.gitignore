@@ -1,0 +1,4 @@
+.env
+faiss/
+__pycache__/
+dummy.py
