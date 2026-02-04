@@ -1,2 +1,2 @@
-# Pashion_Lookie_CORDE
-25-2 Prometheus Project
+# ✨ CORDE_FashionCoordinator 
+[Team10] 25-2 Prometheus Project
