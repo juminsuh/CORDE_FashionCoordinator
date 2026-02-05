@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORDÉ - Persona</title>
+
+  <!-- Pretendard 폰트 -->
+  <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- 공통 스타일 -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Persona 전용 스타일 -->
+  <link rel="stylesheet" href="persona.css" />
+</head>
+<body>
+
+  <!-- HEADER (index.html이랑 동일) -->
+  <header>
+    <img src="images/main_header_rectangle.svg" class="nav-bg" alt="" />
+    <a href="home.html" class="logo-link">
+      <img src="images/corde_logo.svg" class="logo" alt="logo" />
+    </a>
+
+    <a href="usage.html" class="nav-text nav-about">About</a>
+    <a href="howitworks.html" class="nav-text nav-how">How it works</a>
+    <a href="persona.html" class="nav-text nav-persona">Persona</a>
+  </header>
+
+  <!-- MAIN -->
+  <main class="persona-container">
+
+    <!-- 타이틀 -->
+    <section class="persona-intro">
+      <h1>Persona</h1>
+      <p class="subtitle">오늘의 스타일 기준을 골라주세요!</p>
+
+      <!-- 성별 선택 -->
+      <div class="gender-select">
+        <button class="gender-btn" id="btn-male">남자</button>
+        <button class="gender-btn" id="btn-female">여자</button>
+      </div>
+    </section>
+
+    <section class="persona-cards">
+        <div class="persona-slider">
+            <div class="persona-track">
+        
+              <!-- 카드 1 -->
+              <div class="persona-card" data-gender="male" ondblclick="goChat('pme')">
+                <img src="images/pme.svg" alt="pme">
+              </div>
+              
+              <div class="persona-card" data-gender="male" ondblclick="goChat('nowon')">
+                <img src="images/nowon.svg" alt="nowon">
+              </div>
+              
+              <div class="persona-card" data-gender="male" ondblclick="goChat('ob')">
+                <img src="images/ob.svg" alt="ob">
+              </div>
+              
+              <div class="persona-card" data-gender="female" ondblclick="goChat('moyon')">
+                <img src="images/moyon.svg" alt="moyon">
+              </div>
+              
+              <div class="persona-card" data-gender="female" ondblclick="goChat('promi')">
+                <img src="images/promi.svg" alt="promi">
+              </div>
+              
+              <div class="persona-card" data-gender="female" ondblclick="goChat('seoksa')">
+                <img src="images/seoksa.svg" alt="seoksa">
+              </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const maleBtn = document.getElementById('btn-male');
+        const femaleBtn = document.getElementById('btn-female');
+        const cards = document.querySelectorAll('.persona-card');
+
+        let currentGender = null; // null = 전체
+
+        function showAllCards() {
+          cards.forEach(card => {
+            card.style.display = 'block';
+          });
+        }
+
+      
+        function filterCards(gender) {
+          cards.forEach(card => {
+            card.style.display =
+              card.dataset.gender === gender ? 'block' : 'none';
+          });
+        }
+
+        function clearActive() {
+          maleBtn.classList.remove('active');
+          femaleBtn.classList.remove('active');
+        }
+
+        maleBtn.addEventListener('click', () => {
+          if (currentGender === 'male') {
+            // 다시 누르면 전체
+            currentGender = null;
+            clearActive();
+            showAllCards();
+          } else {
+            currentGender = 'male';
+            maleBtn.classList.add('active');
+            femaleBtn.classList.remove('active');
+            filterCards('male');
+          }
+        });
+        
+        femaleBtn.addEventListener('click', () => {
+          if (currentGender === 'female') {
+            // 다시 누르면 전체
+            currentGender = null;
+            clearActive();
+            showAllCards();
+          } else {
+            currentGender = 'female';
+            femaleBtn.classList.add('active');
+            maleBtn.classList.remove('active');
+            filterCards('female');
+          }
+        });
+      
+        function goChat(personaId) {
+            location.href = `chat.html?persona=${personaId}`;
+        }
+
+        showAllCards();
+      
+      </script>
+      
+
+  </main>
+
+</body>
+</html>

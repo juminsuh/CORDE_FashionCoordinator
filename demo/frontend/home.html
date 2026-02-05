@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORDÉ - AI Styling</title>
+
+  <!-- Pretendard -->
+  <link
+    rel="stylesheet"
+    as="style"
+    crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+  />
+
+  <style>
+    /* =====================
+       RESET
+    ===================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    body {
+      background-color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* =====================
+       VIEWPORT
+    ===================== */
+    .viewport {
+      width: 1512px;
+      margin: 0 auto;
+      transform-origin: top center;
+    }
+
+    @media (max-width: 1512px) {
+      .viewport {
+        transform: scale(calc(100vw / 1512));
+      }
+    }
+
+    /* =====================
+       HEADER
+    ===================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1512px;
+      height: 120px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    header img,
+    header a {
+      position: absolute;
+      pointer-events: auto;
+    }
+    header a {
+      text-decoration: none;
+    }
+
+    .nav-bg {
+      left: 833px;
+      top: 42px;
+    }
+
+    .logo {
+      left: 96px;
+      top: 50px;
+    }
+
+    .nav-text {
+      top: 65px;
+      font-size: 23px;
+      font-weight: 600;
+      color: #594B43;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-about { left: 920px; }
+    .nav-how { left: 1058px; }
+    .nav-persona { left: 1269px; }
+
+    /* =====================
+       MAIN
+    ===================== */
+    .main-container {
+      padding-top: 120px;
+    }
+
+    /* =====================
+       HERO
+    ===================== */
+    .hero-card {
+      margin-top: 80px;
+      position: relative;
+      min-height: 75vh;
+      border-radius: 30px;
+      overflow: hidden;
+
+      background: url('images/main.jpeg') center / cover no-repeat;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(102, 85, 75, 0.75);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+    }
+
+    .hero-content h1 {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .hero-content p {
+      font-size: 25px;
+      font-weight: 400;
+      margin-bottom: 80px;
+      opacity: 0.9;
+    }
+
+    /* =====================
+       CTA BUTTON
+    ===================== */
+    .cta-btn {
+      padding: 18px 44px;
+      border-radius: 999px;
+      border: 1.5px solid #fff;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(2px);
+
+      color: #fff;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .cta-btn:hover {
+      background: #fff;
+      color: #443e3a;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="viewport">
+
+    <!-- HEADER -->
+    <header>
+      <img src="images/main_header_rectangle.svg" class="nav-bg" alt="" />
+      <a href="home.html" class="logo-link">
+        <img src="images/corde_logo.svg" class="logo" alt="logo" />
+      </a>
+
+      <a href="usage.html" class="nav-text nav-about">About</a>
+      <a href="howitworks.html" class="nav-text nav-how">How it works</a>
+      <a href="persona.html" class="nav-text nav-persona">Persona</a>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main-container">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <h1>당신의 하루를 이해하고, 함께 스타일을 고릅니다</h1>
+            <p>페르소나와 상황을 바탕으로 대화하듯 완성하는 AI 스타일링</p>
+            <button class="cta-btn" onclick="location.href='persona.html'">
+              스타일 추천 시작하기
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+</body>
+</html>
