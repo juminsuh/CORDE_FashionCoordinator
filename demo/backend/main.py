@@ -853,7 +853,8 @@ async def generate_qr_code(request: QRCodeRequest):
         }
         
         # 3. 모바일 룩북 URL 생성
-        lookbook_url = f"http://172.30.1.45:8000/mobile_result.html?id={outfit_id}"
+        # convert it to your ip address
+        lookbook_url = f"http://000.00.0.00:8000/mobile_result.html?id={outfit_id}"
         
         # 4. QR 코드 생성
         qr = qrcode.QRCode(
