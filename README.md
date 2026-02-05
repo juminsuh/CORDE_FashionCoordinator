@@ -1,7 +1,7 @@
 <div align="center">
 <h1> ✨ CORDE_FashionCoordinator </h1>
 
- [🔥 25-2 Prometheus Team10](https://prometheus-ai.net/)
+ [**🔥 25-2 Prometheus Team10**](https://prometheus-ai.net/)
    
  [**Minsuh Joo**](https://github.com/juminsuh) · [**Ayeon Kim**](https://github.com/rlakdus) · [**Hannah Kim**](https://github.com/khnwave) · **Eunji Kim** (Designer)
 
