@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>About Service</title>
+
+  <!-- Pretendard -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* =====================
+       VIEWPORT (기준 프레임)
+       ===================== */
+    .viewport {
+      width: 1512px;              /* 맥북 프로 14인치 기준 */
+      min-height: 4000px;
+      margin: 0 auto;
+      transform-origin: top center;
+    }
+
+    /* 화면이 작아질 때 비율 스케일 */
+    @media (max-width: 1512px) {
+      .viewport {
+        transform: scale(calc(100vw / 1512));
+      }
+    }
+
+    /* =====================
+       HEADER (고정)
+       ===================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1512px;
+      height: 120px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    header img,
+    header a {
+      position: absolute;
+      pointer-events: auto;
+    }
+    header a {
+      text-decoration: none;
+    }
+
+    /* 네비 배경 */
+    .nav-bg {
+      left: 833px;
+      top: 42px;
+    }
+
+    /* 로고 */
+    .logo {
+      left: 96px;
+      top: 50px;
+    }
+
+    /* 네비 텍스트 */
+    .nav-text {
+      top: 65px;
+      font-size: 23px;
+      font-weight: 600; /* Semi-Bold */
+      color: #594B43;
+      white-space: nowrap;
+    }
+
+    .nav-about { left: 920px; }
+    .nav-how { left: 1058px; }
+    .nav-persona { left: 1269px; }
+
+    /* =====================
+       CONTENT
+       ===================== */
+    .section {
+      position: relative;
+      width: 100%;
+      padding-top: 120px; /* 헤더 높이만큼 밀기 */
+    }
+
+    .section img,
+    .section span {
+      position: absolute;
+    }
+
+    /* About Service 타이틀 */
+    .about-title {
+      left: 606px;
+      top: 140px;
+      font-size: 45px;
+      font-weight: 700;
+      color: #463C36;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="viewport">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+      <img src="images/Rectangle 7935.svg" class="nav-bg" alt="" />
+      <a href="home.html" class="logo-link">
+        <img src="images/Group 427323258.svg" class="logo" alt="logo" />
+      </a>
+      <a href="usage.html" class="nav-text nav-about">About</a>
+      <a href="howitworks.html" class="nav-text nav-how">How it works</a>
+      <a href="persona.html" class="nav-text nav-persona">Persona</a>
+    </header>
+
+    <!-- ===== CONTENT ===== -->
+    <section class="section">
+      <span class="about-title">About Service</span>
+
+      <img src="images/Group 427323308.svg" style="left: 544px; top: 292px;" />
+      <img src="images/Group 427323309.svg" style="left: -3px; top: 605px;" />
+      <img src="images/Group 427323310.svg" style="left: 471px; top: 1243px;" />
+      <img src="images/Group 427323320.svg" style="left: 422px; top: 2096px;" />
+      <img src="images/Group 427323312.svg" style="left: 423px; top: 2853px;" />
+    </section>
+
+  </div>
+</body> 
+</html>

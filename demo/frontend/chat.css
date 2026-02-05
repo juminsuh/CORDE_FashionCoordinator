@@ -1,0 +1,418 @@
+/* =====================
+   RESET
+===================== */
+* {
+    box-sizing: border-box;
+  }
+  
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #ffffff;
+  }
+  
+  /* =====================
+     VIEWPORT
+  ===================== */
+  .viewport {
+    width: 1512px;
+    margin: 0 auto;
+    transform-origin: top center;
+  }
+  
+  @media (max-width: 1512px) {
+    .viewport {
+      transform: scale(calc(100vw / 1512));
+    }
+  }
+  
+  /* =====================
+     PERSONA BACKGROUND
+  ===================== */
+  .pattern-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* persona별 배경 */
+  body.persona-pme .pattern-bg {
+    background-image: url('images/pme_bg.svg');
+    background-color: #B8B9B4;
+  }
+  
+  body.persona-nowon .pattern-bg {
+    background-image: url('images/nowon_bg.svg');
+  }
+  
+  body.persona-ob .pattern-bg {
+    background-image: url('images/ob_bg.svg');
+  }
+  
+  body.persona-moyon .pattern-bg {
+    background-image: url('images/moyon_bg2.svg');
+  }
+  
+  body.persona-promi .pattern-bg {
+    background-image: url('images/promi_bg.svg');
+  }
+  
+  body.persona-seoksa .pattern-bg {
+    background-image: url('images/seoksa_bg.svg');
+  }
+  
+  /* 오버레이 */
+  /* .overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(142, 166, 206, 0.23);
+    z-index: 1;
+    pointer-events: none;
+  } */
+  
+  /* =====================
+     HEADER
+  ===================== */
+  header {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1512px;
+    height: 120px;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  
+  header img,
+  header a {
+    position: absolute;
+    pointer-events: auto;
+  }
+  
+  header a {
+    text-decoration: none;
+  }
+  
+  .nav-bg {
+    left: 56px;
+    top: 42px;
+  }
+  
+  .logo {
+    left: 96px;
+    top: 50px;
+  }
+  
+  .nav-text {
+    top: 65px;
+    font-size: 23px;
+    font-weight: 600;
+    color: #594B43;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  
+  .nav-about {
+    left: 920px;
+  }
+  
+  .nav-how {
+    left: 1058px;
+  }
+  
+  .nav-persona {
+    left: 1269px;
+  }
+  
+  /* =====================
+     CHAT STAGE
+  ===================== */
+  .chat-stage {
+    position: relative;
+    z-index: 5;
+    height: 100vh;
+    padding-top: 120px;
+  }
+  
+  
+  
+  /* =====================
+     CHAT FLOW (핵심)
+  ===================== */
+  .chat-flow {
+    position: absolute;
+    left: 150px;
+    top: 244px;
+    width: 1300px;
+    max-height: 550px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    z-index: 10;
+  }
+  
+  /* =====================
+     MESSAGE (공통)
+  ===================== */
+  @keyframes popIn {
+    0% {
+      opacity: 0;
+      transform: translateY(12px) scale(0.94);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-2px) scale(1.03);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .message {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  
+  /* 챗봇 메시지 (왼쪽) */
+  .message.bot {
+    justify-content: flex-start;
+    animation: popIn 0.4s cubic-bezier(.16, 1, .3, 1)
+  }
+  
+  /* 유저 메시지 (오른쪽) */
+  .message.user {
+    justify-content: flex-end;
+    animation: popIn 0.25s cubic-bezier(.2, .8, .2, 1)
+  }
+
+  /* =====================
+     PROFILE
+  ===================== */
+  .profile {
+    width: 95px;      /* 원하는 크기로 조절 (예: 100px) */
+    height: 95px;
+    flex-shrink: 0;    /* 크기 압축 방지 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile img {
+    width: 100%;       /* 부모인 .profile 크기에 맞춤 */
+    height: 100%;
+    object-fit: cover; /* 이미지 비율 유지 */
+    border-radius: 50%;
+  }
+  
+  /* =====================
+     BUBBLE
+  ===================== */
+ 
+  /* =====================
+   BUBBLE (CSS 말풍선 핵심)
+===================== */
+.bubble-box {
+    max-width: 514px;
+    padding: 20px 28px;
+  
+    border-radius: 26px;
+    font-size: 17px;
+    line-height: 1.5;
+    word-break: keep-all;
+  
+    position: relative;
+  }
+  
+  /* 챗봇 말풍선 */
+:root {
+    /* bot */
+    --bot-bubble-bg: #5D7886;
+    --bot-text-color: #ffffff;
+  
+    /* user */
+    --user-bubble-bg: #ffffff;
+    --user-text-color: #333333;
+  }
+  /* 김프메 */
+
+body.persona-pme {
+  --bot-bubble-bg:  #5FA2C4;
+  --bot-text-color: #ffffff;
+
+  --user-bubble-bg: #ffffff;
+  --user-text-color: #5FA2C4;
+}
+
+/* 정노원 */
+body.persona-nowon {
+  --bot-bubble-bg: #996026;
+  --bot-text-color: #ffffff;
+
+  --user-bubble-bg: #ffffff;
+  --user-text-color: #70471F;
+}
+
+/* 최오비 */
+body.persona-ob {
+  --bot-bubble-bg: #4486D2;
+  --bot-text-color: #ffffff;
+
+  --user-bubble-bg: #FFFFFF;
+  --user-text-color: #348BB7;
+}
+
+/* 이모연 */
+body.persona-moyon {
+  --bot-bubble-bg: #BA4F76;
+  --bot-text-color: #ffffff;
+
+  --user-bubble-bg: #ffffff;
+  --user-text-color: #BC4C75;
+}
+
+/* 정프로미 */
+body.persona-promi {
+  --bot-bubble-bg: #DB6A82;
+  --bot-text-color: #ffffff;
+
+  --user-bubble-bg: #ffffff;
+  --user-text-color: #BE4962;
+}
+
+/* 주석사 */
+body.persona-seoksa {
+  --bot-bubble-bg: #93B6FF;
+  --bot-text-color: #ffffff;
+
+  --user-bubble-bg: #EEF3FA;
+  --user-text-color: #598BF3;
+}
+
+/* 김프메 */
+
+
+:root {
+  --input-bg-image: url('images/input_box.svg');
+}
+body.persona-pme {
+  --input-bg-image: url('images/input_box_pme.svg');
+}
+/* 정노원 */
+body.persona-nowon {
+  --input-bg-image: url('images/input_box_nowon.svg');
+}
+
+/* 최오비 */
+body.persona-ob {
+  --input-bg-image: url('images/input_box_ob.svg');
+}
+
+/* 이모연 */
+body.persona-moyon {
+  --input-bg-image: url('images/input_box_moyon.svg');
+}
+
+/* 정프로미 */
+body.persona-promi {
+  --input-bg-image: url('images/input_box_promi.svg');
+}
+
+/* 주석사 */
+body.persona-seoksa {
+  --input-bg-image: url('images/input_box_seoksa.svg');
+}
+
+  .message.bot .bubble-box {
+    background: var(--bot-bubble-bg);
+    color: var(--bot-text-color);
+  
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  
+  /* 유저 말풍선 */
+  .message.user .bubble-box {
+    background: var(--user-bubble-bg);
+    color: var(--user-text-color);
+  
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  /* =====================
+     BUBBLE TAIL
+  ===================== */
+  /* .message.bot .bubble-box::after {
+    content: "";
+    position: absolute;
+    left: -5px;
+    bottom: 24px;
+  
+    width: 20px;
+    height: 20px;
+    background: var(--bot-bubble-bg);
+  
+    transform: rotate(45deg);
+    border-radius: 4px;
+  }
+  
+  .message.user .bubble-box::after {
+    content: "";
+    position: absolute;
+    right: -5px;
+    bottom: 24px;
+  
+    width: 20px;
+    height: 20px;
+    background: var(--user-bubble-bg);
+  
+    transform: rotate(45deg);
+    border-radius: 4px;
+  } */
+  
+  /* =====================
+     INPUT
+  ===================== */
+  .chat-input {
+    position: absolute;
+    left: 300px;
+    top: 800px;
+    width: 1600px;     /* 🔥 input SVG 실제 가로 */
+    height: 120px; 
+    z-index: 20;
+  }
+  
+  .chat-input input {
+    position: absolute;
+    top: 40px;
+    left: 59px;
+    right: 59px;
+    bottom: 40px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #333;
+  }
+
+  .chat-input .input-bg {
+    width: 100%;
+    height: 100%;
+    background-image: var(--input-bg-image);
+    background-size: contain;
+    background-repeat: no-repeat;
+  }

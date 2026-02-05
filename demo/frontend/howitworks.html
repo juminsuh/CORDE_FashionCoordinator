@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>How it works</title>
+
+  <!-- Pretendard -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* =====================
+       VIEWPORT (기준 프레임)
+       ===================== */
+    .viewport {
+      width: 1512px;              /* 맥북 프로 14인치 기준 */
+      min-height: 4000px;
+      margin: 0 auto;
+      transform-origin: top center;
+    }
+
+    /* 화면이 작아질 때 비율 스케일 */
+    @media (max-width: 1512px) {
+      .viewport {
+        transform: scale(calc(100vw / 1512));
+      }
+    }
+
+    /* =====================
+       HEADER (고정)
+       ===================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1512px;
+      height: 120px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    header img,
+    header a {
+      position: absolute;
+      pointer-events: auto;
+    }
+    header a {
+      text-decoration: none;
+    }
+
+    /* 네비 배경 */
+    .nav-bg {
+      left: 833px;
+      top: 42px;
+    }
+
+    /* 로고 */
+    .logo {
+      left: 96px;
+      top: 50px;
+    }
+
+    /* 네비 텍스트 */
+    .nav-text {
+      top: 65px;
+      font-size: 23px;
+      font-weight: 600; /* Semi-Bold */
+      color: #594B43;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-about { left: 920px; }
+    .nav-how { left: 1058px; }
+    .nav-persona { left: 1269px; }
+
+    /* =====================
+       CONTENT
+       ===================== */
+    .section {
+      position: relative;
+      width: 100%;
+      padding-top: 120px; /* 헤더 높이만큼 밀기 */
+      padding-bottom: 300px;
+    }
+
+    .section img,
+    .section span {
+      position: absolute;
+    }
+
+    /* About Service 타이틀 */
+    .How-title {
+      left: 619px;
+      top: 140px;
+      font-size: 45px;
+      font-weight: 700;
+      color: #463C36;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="viewport">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+      <img src="images/Rectangle 7935.svg" class="nav-bg" alt="" />
+      <a href="home.html" class="logo-link">
+        <img src="images/Group 427323258.svg" class="logo" alt="logo" />
+      </a>
+
+      <a href="usage.html" class="nav-text nav-about">About</a>
+      <a href="howitworks.html" class="nav-text nav-how">How it works</a>
+      <a href="persona.html" class="nav-text nav-persona">Persona</a>
+    </header>
+
+    <!-- ===== CONTENT ===== -->
+    <section class="section">
+      <span class="How-title">How it works</span>
+
+      <img src="images/Group 427323321.svg" style="left: 391px; top: 419px;" />
+      <img src="images/Group 427323322.svg" style="left: 195px; top: 1254px;" />
+      <img src="images/Group 427323323.svg" style="left: 195px; top: 2326px;" />
+      <img src="images/Group 427323324.svg" style="left: 160px; top: 4097px;" />
+    </section>
+
+  </div>
+</body> 
+</html>

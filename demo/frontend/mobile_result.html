@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CORDE | 코디 룩북</title>
+  <link rel="stylesheet" href="mobile_result.css" />
+  <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <img src="images/corde_logo.svg" class="logo" />
+  </header>
+
+  <h1 class="title">코디 룩북</h1>
+
+  <!-- BOOK WRAPPER -->
+  <div class="book-wrapper">
+    <!-- 이전 버튼 -->
+    <button class="nav-btn prev" onclick="prevPage()"></button>
+
+    <!-- 페이지 컨테이너 (JavaScript로 동적 생성) -->
+    <div class="page-container" id="pageContainer">
+      <!-- JavaScript로 동적 생성됩니다 -->
+    </div>
+
+    <!-- 다음 버튼 -->
+    <button class="nav-btn next" onclick="nextPage()"></button>
+  </div>
+
+  <script>
+    // ====================================
+    // 전역 변수
+    // ====================================
+    let currentPage = 0;
+    let totalPages = 0;
+    let currentPersona = null;
+
+    // 기본 이미지 (SVG Data URI)
+    const DEFAULT_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect fill="%23f5f5f5" width="300" height="300"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="16" fill="%23999"%3E이미지 없음%3C/text%3E%3C/svg%3E';
+
+    // 카테고리 순서
+    const CATEGORY_ORDER = ['상의', '아우터', '바지', '신발', '가방'];
+
+    // ====================================
+    // 초기화
+    // ====================================
+    async function initialize() {
+      // URL에서 outfit_id 가져오기
+      const params = new URLSearchParams(window.location.search);
+      const outfitId = params.get('id');
+
+      if (!outfitId) {
+        alert('잘못된 접근입니다!');
+        return;
+      }
+
+      try {
+        // 서버에서 데이터 가져오기
+        const response = await fetch(`http://172.30.1.45:8000/get_outfit/${outfitId}`);
+        
+        if (!response.ok) {
+          throw new Error('룩북 데이터를 불러올 수 없습니다');
+        }
+
+        const result = await response.json();
+        const data = result.outfit_data;
+        currentPersona = result.persona;
+
+        // persona 클래스 적용
+        document.body.classList.add(`persona-${currentPersona}`);
+
+        // 페이지 렌더링
+        renderPages(data);
+
+        // 초기 페이지 표시
+        updatePage();
+
+      } catch (error) {
+        console.error('데이터 로딩 오류:', error);
+        alert('룩북을 불러올 수 없습니다. QR 코드가 만료되었거나 잘못된 링크입니다.');
+      }
+    }
+
+    // ====================================
+    // 페이지 렌더링
+    // ====================================
+    function renderPages(data) {
+      const container = document.getElementById('pageContainer');
+      container.innerHTML = ''; // 기존 내용 제거
+
+      let pageIndex = 0;
+
+      // 0. 커버 페이지 (refined_tpo 포함)
+      const refinedTPO = data.refined_tpo || data.tpo || '오늘의 스타일을 위한 추천';
+      
+      container.innerHTML += `
+        <div class="page cover active" data-page="${pageIndex}">
+          <div class="cover-label">${escapeHtml(refinedTPO)}</div>
+        </div>
+      `;
+      pageIndex++;
+
+      // 1-5. 아이템 페이지들 (카테고리 순서대로)
+      CATEGORY_ORDER.forEach(category => {
+        const item = data.selected_items[category];
+        
+        if (item) {
+          const imgUrl = item.img_url
+            ? `http://172.30.1.45:8000/image-proxy?url=${encodeURIComponent(item.img_url)}`
+            : DEFAULT_IMAGE;
+
+          const productName = item.product_name || '상품명 없음';
+          const brand = item.brand || '브랜드 정보 없음';
+          const price = item.price || '가격 정보 없음';
+          const itemUrl = item.item_url || '#';
+
+          container.innerHTML += `
+            <div class="page item" data-page="${pageIndex}">
+              <img src="${imgUrl}" 
+                   alt="${escapeHtml(productName)}"
+                   onerror="this.src='${DEFAULT_IMAGE}'" />
+              <div class="brand">${escapeHtml(brand)}</div>
+              <div class="name">${escapeHtml(productName)}</div>
+              <div class="price">${escapeHtml(price)}</div>
+              <a class="link" href="${itemUrl}" target="_blank">상품 보러가기 →</a>
+            </div>
+          `;
+          pageIndex++;
+        }
+      });
+
+      totalPages = pageIndex - 1; // 마지막 페이지 인덱스
+    }
+
+    // ====================================
+    // HTML 이스케이프
+    // ====================================
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ====================================
+    // 페이지 네비게이션
+    // ====================================
+    function updatePage() {
+      // 모든 페이지 숨기기
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+
+      // 현재 페이지만 보이기
+      const activePage = document.querySelector(`[data-page="${currentPage}"]`);
+      if (activePage) {
+        activePage.classList.add('active');
+      }
+
+      // 버튼 상태 업데이트
+      const prevBtn = document.querySelector('.nav-btn.prev');
+      const nextBtn = document.querySelector('.nav-btn.next');
+
+      prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+      nextBtn.style.visibility = currentPage === totalPages ? 'hidden' : 'visible';
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updatePage();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        updatePage();
+      }
+    }
+
+    // ====================================
+    // 터치 제스처 (스와이프)
+    // ====================================
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, false);
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          // 왼쪽 스와이프 = 다음 페이지
+          nextPage();
+        } else {
+          // 오른쪽 스와이프 = 이전 페이지
+          prevPage();
+        }
+      }
+    }
+
+    // ====================================
+    // 페이지 로드 시 초기화
+    // ====================================
+    window.addEventListener('DOMContentLoaded', initialize);
+  </script>
+</body>
+</html>
