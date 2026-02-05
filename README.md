@@ -30,7 +30,6 @@ conda activate corde
 2. Install
 
 ```
-cd demo
 pip install -r requirements.txt
 ```
 
