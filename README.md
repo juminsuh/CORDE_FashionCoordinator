@@ -47,6 +47,6 @@ cd demo/frontend
 python -m http.server 8080
 ```
 
-5. Open a [browser]([http://localhost:8080/home.html](http://localhost:8080/home.html)).
+5. Open a [browser](http://localhost:8080/home.html).
 
 **🥳 You are ready to use our service!**
