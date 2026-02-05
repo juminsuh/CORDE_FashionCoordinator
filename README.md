@@ -33,20 +33,22 @@ conda activate corde
 pip install -r requirements.txt
 ```
 
-3. Open a terminal 1 and run the backend server.
+3. Make a .env file at ./backend/ directory and set your `OPENAI_API_KEY` at .env file.
+
+4. Open a terminal 1 and run the backend server.
    
 ```
 cd demo/backend
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-4. Open a terminal 2 and run the frontend.
+5. Open a terminal 2 and run the frontend.
    
 ```
 cd demo/frontend
 python -m http.server 8080
 ```
 
-5. Open a [browser](http://localhost:8080/home.html).
+6. Open a [browser](http://localhost:8080/home.html).
 
 **🥳 You are ready to use our service!**
