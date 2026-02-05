@@ -30,6 +30,7 @@ conda activate corde
 2. Install
 
 ```
+cd demo
 pip install -r requirements.txt
 ```
 
@@ -38,14 +39,14 @@ pip install -r requirements.txt
 4. Open a terminal 1 and run the backend server.
    
 ```
-cd demo/backend
+cd backend
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 5. Open a terminal 2 and run the frontend.
    
 ```
-cd demo/frontend
+cd frontend
 python -m http.server 8080
 ```
 
