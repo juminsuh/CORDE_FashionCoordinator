@@ -36,50 +36,21 @@
   <main class="chat-stage">
 
     <!-- 메시지 영역 -->
-    <div class="chat-flow" id="chatMessages">
-      <!-- 채팅 메시지가 여기에 동적으로 추가됩니다 -->
+    <div class="chat-flow" id="chatMessages"></div>
+  
+    <!-- 입력 영역 -->
+    <div class="chat-input-wrapper">
+      <div class="chat-input">
+        <div class="input-bg"></div>
+        <input id="userInput" placeholder="메시지를 입력하세요" />
+      </div>
+  
+      <button class="send-btn" onclick="sendMessage()"></button>
     </div>
-
-    <!-- 입력 -->
-    <div class="chat-input">
-      <div class="input-bg"></div>
-      <input id="userInput" placeholder="메시지를 입력하세요" />
-      <button id="sendBtn" style="
-        position: absolute;
-        right: 70px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: var(--bot-bubble-bg, #5D7886);
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        z-index: 1000;
-        pointer-events: auto;
-      " onclick="sendMessage()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 2px;">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
-      <script>
-        document.getElementById('sendBtn').addEventListener('mouseenter', function() {
-          this.style.transform = 'translateY(-50%) scale(1.1)';
-          this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-        });
-        document.getElementById('sendBtn').addEventListener('mouseleave', function() {
-          this.style.transform = 'translateY(-50%) scale(1)';
-          this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-        });
-      </script>
-    </div>
-
+  
   </main>
 
-  <!-- SCRIPT -->
+  <!— SCRIPT —>
   <script src="chat.js"></script>
 </body>
 </html>

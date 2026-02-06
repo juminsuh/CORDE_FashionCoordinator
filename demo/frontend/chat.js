@@ -254,7 +254,7 @@ function scrollToBottom() {
 async function showGreeting() {
     await addBotMessage(
         "안녕하세요! 저는 오늘 스타일링을 도와드릴 'Lookie'입니다. 👀\n\n" +
-        "저는 여러분의 페르소나와 오늘의 TPO를 기반으로 상의, 아우터, 바지, 신발, 가방까지 완벽한 코디를 추천해드려요!\n\n" +
+        "저는 여러분의 페르소나와 TPO를 기반으로 상의, 아우터, 바지, 신발, 가방까지 완벽한 코디를 추천해드려요!\n\n" +
         "먼저, 더 나은 추천을 위해 몇 가지 질문을 드릴게요!"
     );
     
@@ -271,7 +271,8 @@ async function askNegativeFit() {
     await addBotMessage(
         "비선호하는 핏이 있나요? \n\n" +
         "• 오버사이즈\n" +
-        "• 슬림\n"
+        "• 슬림\n" +
+        "• 없음\n"
     );
 }
 
@@ -303,7 +304,8 @@ async function askNegativePattern() {
         "비선호하는 패턴이 있나요?\n\n" +
         "• 로고\n" +
         "• 스트라이프\n" +
-        "• 체크\n"
+        "• 체크\n" +
+        "• 없음\n"
     );
     conversationState = 'NEGATIVE_PATTERN';
 }
@@ -342,18 +344,18 @@ async function askNegativePrice() {
 async function handleNegativePrice(userInput) {
     const input = userInput.replace(/\s/g, '').toLowerCase();
     
-    if (input.includes('50') || input.includes('오십')) {
-        negativeData.price_threshold = 500000;
-        selectedPrice = '50만원';
-    } else if (input.includes('20') || input.includes('이십')) {
-        negativeData.price_threshold = 200000;
-        selectedPrice = '20만원';
-    } else if (input.includes('30') || input.includes('삼십')) {
-        negativeData.price_threshold = 300000;
-        selectedPrice = '30만원';
-    } else if (input.includes('10') || input.includes('십')) {
+    if (input.includes('10')) {
         negativeData.price_threshold = 100000;
         selectedPrice = '10만원';
+    } else if (input.includes('20')) {
+        negativeData.price_threshold = 200000;
+        selectedPrice = '20만원';
+    } else if (input.includes('30')) {
+        negativeData.price_threshold = 300000;
+        selectedPrice = '30만원';
+    } else if (input.includes('50')) {
+        negativeData.price_threshold = 500000;
+        selectedPrice = '50만원';
     } else {
         negativeData.price_threshold = 500000;
     }
@@ -380,14 +382,14 @@ async function handleNegativePrice(userInput) {
 // ====================================
 async function askTPO() {
     await addBotMessage(
-        "이제 오늘의 TPO를 알려주세요!\n\n" +
+        "이제 TPO를 알려주세요!\n\n" +
         "📌 TPO는 Time(시간), Place(장소), Occasion(상황)을 의미해요.\n\n" +
         "예시:\n" +
         "• 대학교 수업 듣고 친구랑 저녁 약속\n" +
         "• 친구 생일파티\n" +
         "• 회사 면접\n" +
         "• 애인과 데이트\n\n" +
-        "오늘은 어떤 하루를 보내실 건가요?"
+        "어떤 하루를 보내실 건가요?"
     );
 }
 
@@ -875,8 +877,8 @@ async function handleFeedback(userInput) {
         conversationState = `FEEDBACK_${feedbackType.toUpperCase()}`;
     } else {
         await addBotMessage(
-            "죄송해요, 이해하지 못했어요. 😅\n\n" +
-            "다음 중 하나를 선택해주세요:\n" +
+            "조금 더 취향에 맞게 추천해드릴게요!\n\n" +
+            "더 구체적인 추천을 위해 어떤 부분을 바꿔보면 좋을지 골라주세요!\n" +
             "• 세부 카테고리 변경\n" +
             "• 색상 변경\n" +
             "• 소재 변경"
@@ -911,6 +913,248 @@ async function showFeedbackOptions(feedbackType) {
         `${optionsText}`
     );
 }
+
+// async function applyFeedback(feedbackType, userInput) {
+    
+//     // 사용자 입력에서 매칭되는 옵션 찾기
+//     const cleanInput = userInput.replace(/\s/g, '').toLowerCase();
+//     let selectedOptions = [];
+    
+//     if (feedbackType === "sub_cat_name"){
+//         if (currentCategory === "상의"){
+//             if (cleanInput.includes("긴소매티셔츠") || cleanInput.includes("긴팔")){
+//                 selectedOptions = ["긴소매 티셔츠"];
+//             } 
+//             else if (cleanInput.includes("니트") || cleanInput.includes("스웨터")){
+//                 selectedOptions = ["니트/스웨터"];
+//             }
+//             else if (cleanInput.includes("후드티셔츠") || cleanInput.includes("후드")){
+//                 selectedOptions = ["후드 티셔츠"];
+//             }
+//             else if (cleanInput.includes("피케") || cleanInput.includes("카라")){
+//                 selectedOptions = ["피케/카라 티셔츠"];
+//             }
+//             else if (cleanInput.includes("맨투맨") || cleanInput.includes("스웨트")){
+//                 selectedOptions = ["맨투맨/스웨트"];
+//             }
+//             else if (cleanInput.includes("셔츠") || cleanInput.includes("블라우스")){
+//                 selectedOptions = ["셔츠/블라우스"];
+//             }
+//         }
+        
+//         else if (currentCategory === "아우터"){
+//             if (cleanInput.includes("롱패딩") || cleanInput.includes("헤비아우터")){
+//                 selectedOptions = ["롱패딩/헤비 아우터"];
+//             } 
+//             else if (cleanInput.includes("무스탕") || cleanInput.includes("퍼")){
+//                 selectedOptions = ["무스탕/퍼"];
+//             }
+//             else if (cleanInput.includes("플리스") || cleanInput.includes("뽀글이")){
+//                 selectedOptions = ["플리스/뽀글이"];
+//             }
+//             else if (cleanInput.includes("코트")){
+//                 selectedOptions = ["겨울 싱글 코트"];
+//             }
+//             else if (cleanInput.includes("숏패딩")){
+//                 selectedOptions = ["숏패딩/헤비 아우터"];
+//             }
+//             else if (cleanInput.includes("슈트") || cleanInput.includes("블레이저") || cleanInput.includes("재킷") || cleanInput.includes("수트") || cleanInput.includes("자켓")){
+//                 selectedOptions = ["슈트/블레이저 재킷"];
+//             }
+//             else if (cleanInput.includes("카디건") || cleanInput.includes("가디건")){
+//                 selectedOptions = ["카디건"];
+//             }
+//             else if (cleanInput.includes("후드집업")){
+//                 selectedOptions = ["후드 집업"];
+//             }
+//         }
+        
+//         else if (currentCategory === "바지"){
+//             if (cleanInput.includes("데님") || cleanInput.includes("청바지")){
+//                 selectedOptions = ["데님 팬츠"];
+//             } 
+//             else if (cleanInput.includes("코튼")){
+//                 selectedOptions = ["코튼 팬츠"];
+//             }
+//             else if (cleanInput.includes("슈트팬츠") || cleanInput.includes("슬랙스")){
+//                 selectedOptions = ["슈트 팬츠/슬랙스"];
+//             }
+//             else if (cleanInput.includes("트레이닝") || cleanInput.includes("조거") || cleanInput.includes("고무줄")){
+//                 selectedOptions = ["트레이닝/조거 팬츠"];
+//             }
+//         }
+        
+//         else if (currentCategory === "신발"){
+//             if (cleanInput.includes("스니커즈") || cleanInput.includes("운동화")){
+//                 selectedOptions = ["스니커즈"];
+//             } 
+//             else if (cleanInput.includes("부츠") || cleanInput.includes("워커")){
+//                 selectedOptions = ["부츠/워커"];
+//             }
+//             else if (cleanInput.includes("구두")){
+//                 selectedOptions = ["구두"];
+//             }
+//             else if (cleanInput.includes("퍼신발") || cleanInput.includes("패딩") || cleanInput.includes("털")){
+//                 selectedOptions = ["패딩/퍼 신발"];
+//             }
+//         }
+        
+//         else if (currentCategory === "가방"){
+//             if (cleanInput.includes("백팩") || cleanInput.includes("책가방")){
+//                 selectedOptions = ["백팩"];
+//             } 
+//             else if (cleanInput.includes("메신저") || cleanInput.includes("크로스")){
+//                 selectedOptions = ["메신저/크로스 백"];
+//             }
+//             else if (cleanInput.includes("에코백")){
+//                 selectedOptions = ["에코백"];
+//             }
+//             else if (cleanInput.includes("숄더")){
+//                 selectedOptions = ["숄더백"];
+//             }
+//         }
+//     }
+    
+//     else if (feedbackType === "color"){
+//         const whiteKeywords = ["화이트", "하얀색", "흰색", "흰", "하얀"];
+//         const blackKeywords = ["검정", "블랙"];
+
+//         if (whiteKeywords.some(keyword => cleanInput.includes(keyword))){
+//             selectedOptions = ["화이트"];
+//         }
+//         else if (blackKeywords.some(keyword => cleanInput.includes(keyword))){
+//             selectedOptions = ["블랙"];
+//         }
+//         else if (cleanInput.includes("베이지")){
+//             selectedOptions = ["베이지"];
+//         }
+//         else if (cleanInput.includes("차콜")){
+//             selectedOptions = ["차콜"];
+//         }
+//         else if (cleanInput.includes("그린")){
+//             selectedOptions = ["그린"];
+//         }
+//         else if (cleanInput.includes("그레이") || cleanInput.includes("회색")){
+//             selectedOptions = ["그레이"];
+//         }
+//         else if (cleanInput.includes("네이비") || cleanInput.includes("남색")){
+//             selectedOptions = ["네이비"];
+//         }
+//         else if (cleanInput.includes("브라운") || cleanInput.includes("갈색")){
+//             selectedOptions = ["브라운"];
+//         }
+//         else if (cleanInput.includes("핑크") || cleanInput.includes("분홍")){
+//             selectedOptions = ["핑크"];
+//         }
+//         else if (cleanInput.includes("블루") || cleanInput.includes("파란") || cleanInput.includes("하늘")){
+//             selectedOptions = ["블루"];
+//         }
+//         else if (cleanInput.includes("버건디") || cleanInput.includes("빨간") || cleanInput.includes("빨강")){
+//             selectedOptions = ["버건디"];
+//         }
+//     }
+    
+//     else if (feedbackType === "texture"){
+//         if (cleanInput.includes("면")){
+//             selectedOptions = ["면"];
+//         }
+//         else if (cleanInput.includes("니트")){
+//             selectedOptions = ["니트"];
+//         }
+//         else if (cleanInput.includes("폴리에스테르")){
+//             selectedOptions = ["폴리에스테르"];
+//         }
+//         else if (cleanInput.includes("나일론")){
+//             selectedOptions = ["나일론"];
+//         }
+//         else if (cleanInput.includes("울")){
+//             selectedOptions = ["울"];
+//         }
+//         else if (cleanInput.includes("천연가죽")){
+//             selectedOptions = ["천연가죽"];
+//         }
+//         else if (cleanInput.includes("스웨이드")){
+//             selectedOptions = ["스웨이드"];
+//         }
+//         else if (cleanInput.includes("인조가죽")){
+//             selectedOptions = ["인조가죽"];
+//         }
+//     }
+//     if (selectedOptions.length === 0) {
+//         await addBotMessage("일치하는 옵션을 찾지 못했어요. 다시 선택해주세요!");
+//         return;
+//     }
+    
+//     try {
+//         // 로딩 메시지 추가
+//         const loadingMessage = document.createElement("div");
+//         loadingMessage.className = "message bot";
+        
+//         loadingMessage.innerHTML = `
+//             <img src="images/lookie_black.svg" class="profile" alt="Lookie" />
+//             <div class="bubble-box bot">
+//                 <div class="bubble-text" style="display: flex; align-items: center; gap: 8px;">
+//                     피드백을 반영해서 다시 추천드릴게요
+//                     <div class="loading-dots-container" style="display: flex; gap: 6px; align-items: center;">
+//                         <div class="loading-dot" style="width: 10px; height: 10px; background: white; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; animation-delay: -0.32s;"></div>
+//                         <div class="loading-dot" style="width: 10px; height: 10px; background: white; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; animation-delay: -0.16s;"></div>
+//                         <div class="loading-dot" style="width: 10px; height: 10px; background: white; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both;"></div>
+//                     </div>
+//                 </div>
+//             </div>
+//         `;
+    
+//         chatFlow.appendChild(loadingMessage);
+//         scrollToBottom();
+        
+//         await apiCall('/feedback', 'POST', {
+//             type: feedbackType,
+//             value: selectedOptions
+//         });
+        
+//         // 재추천
+//         const data = await apiCall('/recommend/next', 'POST');
+        
+//         // 로딩 메시지 제거
+//         loadingMessage.remove();
+        
+//         if (data.candidates && data.candidates.length > 0) {
+//             // 🔥 핵심 수정: 새 추천과 이전 추천 구분하여 합치기
+//             const allCandidates = [];
+            
+//             // 새 추천의 product_id 수집 (중복 체크용)
+//             const newProductIds = new Set();
+//             data.candidates.forEach(item => {
+//                 item._source = 'new';  // ✅ 새 추천 표시
+//                 allCandidates.push(item);
+//                 newProductIds.add(item.product_id);
+//             });
+            
+//             // 이전 추천 추가 (중복 제거: 새 추천에 없는 것만)
+//             if (previousCandidates && previousCandidates.length > 0) {
+//                 previousCandidates.forEach(item => {
+//                     if (!newProductIds.has(item.product_id)) {
+//                         item._source = 'previous';  // ✅ 이전 추천 표시
+//                         allCandidates.push(item);
+//                     }
+//                 });
+//             }
+            
+//             // 🔥 핵심: 현재 추천을 이전 추천으로 백업 (다음 피드백을 위해)
+//             previousCandidates = allCandidates.slice();  // 전체 복사
+            
+//             await displayRecommendations(allCandidates, currentCategory, true);  // ✅ showPreviousLabel=true
+//         } else {
+//             await handleEmptyRecommendation();
+//         }
+        
+//         conversationState = 'RECOMMENDATION';
+        
+//     } catch (error) {
+//         console.error('피드백 적용 실패:', error);
+//         await addBotMessage("피드백 적용 중 오류가 발생했어요. 다시 시도해주세요.");
+//     }
+// }
 
 async function applyFeedback(feedbackType, userInput) {
     

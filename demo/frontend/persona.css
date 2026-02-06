@@ -1,203 +1,189 @@
 /* RESET */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
-  
+
 body {
-    background: #fff;
+  background: #fff;
 }
-  
+
 /* HEADER (재사용) */
 header {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1512px;
-    height: 120px;
-    z-index: 1000;
-    pointer-events: none;
-  }
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1512px;
+  height: 120px;
+  z-index: 1000;
+  pointer-events: none;
+}
 
-  header img,
-  header a {
-    position: absolute;
-    pointer-events: auto;
-  }
-  header a {
-    text-decoration: none;
-  }
+header img,
+header a {
+  position: absolute;
+  pointer-events: auto;
+}
+header a {
+  text-decoration: none;
+}
 
-  .nav-bg {
-    left: 833px;
-    top: 42px;
-  }
+.nav-bg {
+  left: 833px;
+  top: 42px;
+}
 
-  .logo {
-    left: 96px;
-    top: 50px;
-  }
+.logo {
+  left: 96px;
+  top: 50px;
+}
 
-  .nav-text {
-    top: 65px;
-    font-size: 23px;
-    font-weight: 600;
-    color: #594B43;
-    white-space: nowrap;
-    cursor: pointer;
-  }
+.nav-text {
+  top: 65px;
+  font-size: 23px;
+  font-weight: 600;
+  color: #594B43;
+  white-space: nowrap;
+  cursor: pointer;
+}
 
-  .nav-about { left: 920px; }
-  .nav-how { left: 1058px; }
-  .nav-persona { left: 1269px; }
-  
+.nav-about { left: 920px; }
+.nav-how { left: 1058px; }
+.nav-persona { left: 1269px; }
+
 /* MAIN */
 .main-container {
-    padding: 0 clamp(24px, 5vw, 64px) 48px;
+  padding: 0 clamp(24px, 5vw, 64px) 48px;
 }
-  
+
 .header {
-    left: clamp(24px, 5vw, 64px);
-    right: clamp(24px, 5vw, 64px);
+  left: clamp(24px, 5vw, 64px);
+  right: clamp(24px, 5vw, 64px);
 }
 
 /* MAIN */
 .persona-container {
-    padding-top: 180px; /* header 공간 확보 */
-    padding-left: clamp(24px, 5vw, 64px);
-    padding-right: clamp(24px, 5vw, 64px);
+  padding-top: 180px; /* header 공간 확보 */
+  padding-left: clamp(24px, 5vw, 64px);
+  padding-right: clamp(24px, 5vw, 64px);
 }
-  
+
 /* INTRO */
 .persona-intro {
-    text-align: center;
+  text-align: center;
 }
-  
+
 .persona-intro h1 {
-    font-size: 50px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: #3e342d;
+  font-size: 50px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #3e342d;
 }
-  
+
 .subtitle {
-    font-size: 25px;
-    color: #6b5e55;
-    margin-bottom: 32px;
+  font-size: 25px;
+  color: #6b5e55;
+  margin-bottom: 32px;
 }
-  
+
 /* GENDER SELECT */
 .gender-select {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 32px;
 }
-  
+
 .gender-btn {
-    padding: 10px 22px;
-    border-radius: 999px;
-    border: 1px solid #e5e0db;
-    background: #fff;
-    font-size: 15px;
-    font-weight: 500;
-    color: #6b5e55;
-    cursor: pointer;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid #e5e0db;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b5e55;
+  cursor: pointer;
 }
-  
+
 .gender-btn.active {
-    background: #fbf6f1;
-    border-color: #d8cfc6;
-    color: #3e342d;
+  background: #fbf6f1;
+  border-color: #d8cfc6;
+  color: #3e342d;
 }
-  
+
 /* HINT BUBBLE */
 .hint-bubble {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 12px 20px;
-    border-radius: 20px;
-    background: #a9bd8a;
-    color: #fff;
-    font-size: 14px;
+  display: inline-block;
+  margin-top: 12px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  background: #a9bd8a;
+  color: #fff;
+  font-size: 14px;
 }
 /* PERSONA CARDS */
 .persona-cards {
-    margin-top: 80px;
-  }
-  
-  /* 가로 스와이프 영역 */
-/* .persona-slider {
-    overflow-x: auto;
-    padding-bottom: 20px;
-} */
+  margin-top: 30px;
+  margin-bottom: 100px;
+}
+
 
 .persona-slider {
-  perspective: 1200px;
-  overflow-x: auto;
-  padding-bottom: 20px;
+overflow-x: auto;
+padding: 60px 0;
+margin-top: 20px;
 }
-  
-  /* 카드 트랙 */
+
+/* 카드 트랙 */
 .persona-track {
-    display: flex;
-    gap: 40px;
-    padding: 0 64px;
-  
-    scroll-snap-type: x mandatory;
+  display: flex;
+  gap: 40px;
+  padding: 0 100px;
+  align-items: center;
+
+  scroll-snap-type: x mandatory;
 }
-  
-  /* 카드 */
-/* .persona-card {
-    flex: 0 0 420px;        
-    cursor: pointer;
-  
-    scroll-snap-align: center;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-} */
 
 .persona-card {
-  flex: 0 0 420px;
-  cursor: pointer;
-  scroll-snap-align: center;
+flex: 0 0 420px;
+cursor: pointer;
+scroll-snap-align: center;
 
-  transition:
-    transform 0.35s cubic-bezier(.2,.8,.2,1),
-    box-shadow 0.35s ease;
+/* 중요: position이 있어야 z-index가 작동하여 옆 카드보다 위로 올라옵니다. */
+position: relative; 
 
-  transform: translateZ(0) scale(1);
+transition: transform 0.35s cubic-bezier(.2, .8, .2, 1), box-shadow 0.35s ease;
+/* 이미지가 부모를 뚫고 나오도록 설정 */
+transform-origin: center center; 
 }
-
-.persona-card img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 24px;
-}
-  
-  /* hover 효과 */
-/* .persona-card:hover {
-    transform: translateY(-8px);
-} */
 
 .persona-card:hover {
-  transform: translateZ(160px) scale(1.2);
-  box-shadow:
-    0 60px 120px rgba(0, 0, 0, 0.35),
-    0 20px 50px rgba(0, 0, 0, 0.2);
-  z-index: 30;
-} 
+/* scale을 유지하되, 전체적으로 "툭" 튀어나오는 느낌을 줍니다. */
+transform: scale(1.15); 
+z-index: 100; /* 주변 요소보다 확실히 위에 표시 */
+box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+}
+
+/* 4. 이미지 요소: 이미지가 부모 박스에 갇히지 않도록 확인 */
+.persona-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 24px;
+  /* 이미지 자체가 잘리지 않도록 보장 */
+  backface-visibility: hidden;
+}
 
 .typing-dots {
-  font-size: 28px;
-  letter-spacing: 4px;
+font-size: 28px;
+letter-spacing: 4px;
 }
 
 .typing-dots span {
-  animation: dotBlink 1.4s infinite both;
+animation: dotBlink 1.4s infinite both;
 }
 
 .typing-dots span:nth-child(1) { animation-delay: 0s; }
@@ -205,7 +191,7 @@ header {
 .typing-dots span:nth-child(3) { animation-delay: .4s; }
 
 @keyframes dotBlink {
-  0%   { opacity: .2; }
-  20%  { opacity: 1; }
-  100% { opacity: .2; }
+0%   { opacity: .2; }
+20%  { opacity: 1; }
+100% { opacity: .2; }
 }
