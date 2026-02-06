@@ -34,22 +34,24 @@ cd demo
 pip install -r requirements.txt
 ```
 
-4. Make a .env file at ./backend/ directory and set your `OPENAI_API_KEY` at .env file.
+4. Make a `.env` file at `./backend/` directory and set your `OPENAI_API_KEY` at `.env` file.
 
-5. Open a terminal 1 and run the backend server.
+5. Replace the wifi ip address both at `./backend/main.py` and `./frontend/mobile_result.html` to your wifi ip address. 
+
+6. Open a terminal 1 and run the backend server.
    
 ```
 cd backend
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-6. Open a terminal 2 and run the frontend.
+7. Open a terminal 2 and run the frontend.
    
 ```
 cd frontend
 python -m http.server 8080
 ```
 
-7. Open a [browser](http://localhost:8080/home.html).
+8. Open a [browser](http://localhost:8080/home.html).
 
 **🥳 You are ready to use our service!**
