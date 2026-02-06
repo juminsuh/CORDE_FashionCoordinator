@@ -267,6 +267,282 @@
       }
     }
 
+    // ====================================
+// 🆕 QR 코드 생성
+// ====================================
+// async function generateQRCode() {
+//   try {
+//     const submitBtn = document.querySelector('.qr-btn');
+//     submitBtn.disabled = true;
+//     submitBtn.textContent = 'QR 코드 생성 중...';
+
+//     // 1. localStorage에서 데이터 가져오기
+//     const outfitData = JSON.parse(localStorage.getItem('finalOutfit'));
+    
+//     if (!outfitData) {
+//       alert('룩북 데이터가 없습니다!');
+//       return;
+//     }
+
+//     // 2. API 호출 - QR 코드 생성
+//     const response = await fetch('http://127.0.0.1:8000/generate_qr', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({
+//         outfit_data: outfitData,
+//         persona: currentPersona
+//       })
+//     });
+
+//     if (!response.ok) {
+//       throw new Error('QR 코드 생성 실패');
+//     }
+
+//     const result = await response.json();
+    
+//     // 🔥 3. 모달 팝업으로 QR 코드 표시
+//     displayQRCode(result);
+    
+//     console.log('✅ QR 코드 생성 완료!');
+//     console.log('   룩북 URL:', result.lookbook_url);
+    
+//   } catch (error) {
+//     console.error('QR 코드 생성 오류:', error);
+//     alert('QR 코드 생성 중 오류가 발생했어요. 다시 시도해주세요.');
+//   } finally {
+//     const submitBtn = document.querySelector('.qr-btn');
+//     submitBtn.disabled = false;
+//     submitBtn.textContent = '📱 QR 코드 생성하기';
+//   }
+// }
+
+// ====================================
+// 🆕 QR 코드 생성
+// ====================================
+async function generateQRCode() {
+  try {
+    const submitBtn = document.querySelector('.qr-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'QR 코드 생성 중...';
+
+    // 1. localStorage에서 데이터 가져오기
+    const outfitData = JSON.parse(localStorage.getItem('finalOutfit'));
+    
+    if (!outfitData) {
+      alert('룩북 데이터가 없습니다!');
+      return;
+    }
+
+    // 2. API 호출 - QR 코드 생성
+    const response = await fetch('http://127.0.0.1:8000/generate_qr', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        outfit_data: outfitData,
+        persona: currentPersona
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('QR 코드 생성 실패');
+    }
+
+    const result = await response.json();
+    
+    // 🔥 3. 모달 팝업으로 QR 코드 표시
+    displayQRCode(result);
+    
+    console.log('✅ QR 코드 생성 완료!');
+    console.log('   룩북 URL:', result.lookbook_url);
+    
+  } catch (error) {
+    console.error('QR 코드 생성 오류:', error);
+    alert('QR 코드 생성 중 오류가 발생했어요. 다시 시도해주세요.');
+  } finally {
+    const submitBtn = document.querySelector('.qr-btn');
+    submitBtn.disabled = false;
+    submitBtn.textContent = '📱 QR 코드 생성하기';
+  }
+}
+// ====================================
+// 🎨 QR 코드 모달 표시
+// ====================================
+function displayQRCode(qrData) {
+  // QR 코드 모달 생성
+  const modal = document.createElement('div');
+  modal.id = 'qrModal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+  `;
+  
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = `
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalFadeIn 0.3s ease;
+  `;
+  
+  // 애니메이션 추가
+  if (!document.getElementById('qr-modal-animation')) {
+    const style = document.createElement('style');
+    style.id = 'qr-modal-animation';
+    style.textContent = `
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  modalContent.innerHTML = `
+    <button id="closeQRModal" style="
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #f5f5f5;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: #666;
+    " onmouseover="this.style.background='#e0e0e0'" onmouseout="this.style.background='#f5f5f5'">
+      ✕
+    </button>
+    
+    <h2 style="
+      margin: 0 0 24px 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--bot-bubble-bg);
+    ">📱 모바일 룩북</h2>
+    
+    <div style="
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    ">
+      <img src="${qrData.qr_code_url}" 
+           alt="QR Code" 
+           style="
+             width: 240px;
+             height: 240px;
+             border-radius: 12px;
+             background: white;
+             padding: 12px;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+           " />
+    </div>
+    
+    <p style="
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    ">
+      📸 휴대폰 카메라로 QR 코드를 스캔하면<br/>
+      모바일에서 룩북을 확인할 수 있어요!
+    </p>
+    
+    <button id="copyLinkBtn" style="
+      width: 100%;
+      padding: 14px 24px;
+      background: var(--bot-bubble-bg);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.2)'" 
+       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'">
+      🔗 링크 복사하기
+    </button>
+  `;
+  
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+  
+  // 닫기 버튼 이벤트
+  document.getElementById('closeQRModal').onclick = () => {
+    modal.style.animation = 'modalFadeIn 0.2s ease reverse';
+    setTimeout(() => modal.remove(), 200);
+  };
+  
+  // 배경 클릭 시 닫기
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.style.animation = 'modalFadeIn 0.2s ease reverse';
+      setTimeout(() => modal.remove(), 200);
+    }
+  };
+  
+  // ESC 키로 닫기
+  const escHandler = (e) => {
+    if (e.key === 'Escape') {
+      modal.style.animation = 'modalFadeIn 0.2s ease reverse';
+      setTimeout(() => modal.remove(), 200);
+      document.removeEventListener('keydown', escHandler);
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+  
+  // 링크 복사 버튼
+  document.getElementById('copyLinkBtn').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(qrData.lookbook_url);
+      
+      const btn = document.getElementById('copyLinkBtn');
+      const originalText = btn.textContent;
+      btn.textContent = '✅ 복사 완료!';
+      btn.style.background = '#4CAF50';
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = 'var(--bot-bubble-bg)';
+      }, 2000);
+    } catch (err) {
+      alert('링크 복사에 실패했습니다: ' + err);
+    }
+  };
+}
+
+
 
     // ====================================
     // 🔄 초기화 함수 (PC 전용)
