@@ -3,7 +3,7 @@
 
  [**🔥 25-2 Prometheus Team10**](https://prometheus-ai.net/)
    
- [**Minsuh Joo**](https://github.com/juminsuh) · [**Ayeon Kim**](https://github.com/rlakdus) · [**Hannah Kim**](https://github.com/khnwave) · **Eunji Kim** (Designer)
+ [**Minsuh Joo**](https://github.com/juminsuh) · [**Ahyeon Kim**](https://github.com/rlakdus) · [**Hannah Kim**](https://github.com/khnwave) · **Eunji Kim** (Designer)
 
 </div>
 
@@ -27,29 +27,29 @@ conda create -n corde python=3.10 -y
 conda activate corde
 ```
 
-2. Install
+3. Install
 
 ```
 cd demo
 pip install -r requirements.txt
 ```
 
-3. Make a .env file at ./backend/ directory and set your `OPENAI_API_KEY` at .env file.
+4. Make a .env file at ./backend/ directory and set your `OPENAI_API_KEY` at .env file.
 
-4. Open a terminal 1 and run the backend server.
+5. Open a terminal 1 and run the backend server.
    
 ```
 cd backend
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-5. Open a terminal 2 and run the frontend.
+6. Open a terminal 2 and run the frontend.
    
 ```
 cd frontend
 python -m http.server 8080
 ```
 
-6. Open a [browser](http://localhost:8080/home.html).
+7. Open a [browser](http://localhost:8080/home.html).
 
 **🥳 You are ready to use our service!**
