@@ -342,26 +342,45 @@ async function askNegativePrice() {
 }
 
 async function handleNegativePrice(userInput) {
-    const input = userInput.replace(/\s/g, '').toLowerCase();
+    // 1. 입력값에서 숫자만 추출 (예: "40만원" -> 40, "약 15만" -> 15)
+    const numberMatch = userInput.match(/\d+/);
     
-    if (input.includes('10')) {
-        negativeData.price_threshold = 100000;
-        selectedPrice = '10만원';
-    } else if (input.includes('20')) {
-        negativeData.price_threshold = 200000;
-        selectedPrice = '20만원';
-    } else if (input.includes('30')) {
-        negativeData.price_threshold = 300000;
-        selectedPrice = '30만원';
-    } else if (input.includes('50')) {
-        negativeData.price_threshold = 500000;
-        selectedPrice = '50만원';
-    } else {
-        negativeData.price_threshold = 500000;
+    if (!numberMatch) {
+        await addBotMessage("정확한 가격(숫자)을 말씀해 주시면 기준을 맞춰드릴 수 있어요! 🧐");
+        return;
     }
 
-    await addBotMessage(`네, ${selectedPrice} 이하의 상품만 추천드릴게요! ✅`);
-    
+    const inputNum = parseInt(numberMatch[0]);
+    let threshold = 500000; // 기본값
+    let label = '50만원';
+
+    // 2. Ceiling(올림) 로직 적용
+    if (inputNum <= 10) {
+        threshold = 100000;
+        label = '10만원';
+    } else if (inputNum <= 20) {
+        threshold = 200000;
+        label = '20만원';
+    } else if (inputNum <= 30) {
+        threshold = 300000;
+        label = '30만원';
+    } else {
+        // 30 초과 50 이하, 혹은 그 이상인 경우 모두 50으로 처리
+        threshold = 500000;
+        label = '50만원';
+    }
+
+    // 데이터 업데이트
+    negativeData.price_threshold = threshold;
+
+    // 3. 동적인 응답 메시지
+    // 사용자가 입력한 숫자와 우리가 설정한 기준이 다를 때 "상위 기준으로 제안"하는 멘트 추가
+    if (inputNum !== (threshold / 10000)) {
+        await addBotMessage(`네, 말씀하신 금액을 고려해서, ${label} 이하의 상품들 위주로 넉넉하게 찾아볼게요! ✅`);
+    } else {
+        await addBotMessage(`네, ${label} 이하의 상품들로 필터링해서 추천해 드릴게요! ✅`);
+    }
+
     // 백엔드로 전송
     try {
         await apiCall('/session/negatives', 'POST', negativeData);
@@ -445,11 +464,21 @@ async function handleTPO(userInput) {
         // 로딩 메시지 제거
         loadingMessage.remove();
         
+        // conflict 여부에 따른 메세지 내용 추가
+        let conflictMessage = "";
+        if (data.conflict) {
+            conflictMessage = "오늘은 평소와 다른 스타일링이 필요하겠군요! 🎨\n새로운 시도를 위한 특별한 추천을 준비할게요.";
+        } else {
+            conflictMessage = "평소 스타일과 잘 어울리는 TPO네요! 👍\n당신의 페르소나에 딱 맞는 코디를 찾아드릴게요.";
+        }
+        await addBotMessage(conflictMessage);
+        
+        await sleep(800); // 약간의 딜레이
+        
         await addBotMessage(
             `좋아요! "${data.refined_tpo}"에 맞는 스타일을 찾아드릴게요! 🎯\n\n` +
             "이제 상의부터 아이템별로 추천을 시작합니다!"
         );
-        
         await sleep(1500);
         conversationState = 'RECOMMENDATION';
         await startRecommendation();
