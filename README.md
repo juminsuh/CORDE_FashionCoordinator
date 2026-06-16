@@ -54,4 +54,14 @@ python -m http.server 8080
 
 **🥳 You are ready to use our service!**
 
-<h2>Key Function</h2>
+<h2>Key Features</h2>
+
+1. We collected item image and metadata (e.g., `sub_category`, `texture`, `pattern`, `fit`, and .etc) from [musinsa](https://www.musinsa.com/main/musinsa/recommend?skip_bf=Y&gf=A) in order to reflect trend and diverse preference of users. 
+
+2. We constructed two databases which include style DB and TPO DB, using FAISS vectorstore. We embedded only necessary information `style_name` and `top + mood`, respectively.
+
+3. Based on user's selected persona, TPO, and negatives (fit, pattern, and price), Lookie✨ recommends items sequentially (top -> outer -> bottom -> shoes -> bag: Full Codie! 👚).
+
+4. We retrieved top-5 style-based items and TPO-based items and rerank them by prompting LLM. For overall harmonics between items, LLM rerank the retreived 10 items. If LLM determines style and TPO conflict, it reranks items, priotizing TPO. Otherwise, it reranks items with balanced weights. Finally, Lookie✨ returns top-3 items with friendly and interpretable recommendation reasons. 
+
+5. User can give a feedback if the recommended results are unsatisfactory. User can change `sub_category`, `color`, and `texture` if they want.
