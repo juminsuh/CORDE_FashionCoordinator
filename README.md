@@ -9,8 +9,7 @@
 
 <h2>Introduction</h2>
 
-페르소나와 TPO 기반 개인 맞춤형 코디 추천 챗봇 시스템입니다. 더 자세한 정보는 [판넬](./assets/pme10pannel.pdf)을 통해 확인하실 수 있습니다. 
-
+The fashion recommendation chatbot based on personal and TPO (Time, Place, Occasion). More detailed information is represented at the presentation [poster](./assets/pme10pannel.pdf). 
 
 <h2>Setup & Run</h2>
 
