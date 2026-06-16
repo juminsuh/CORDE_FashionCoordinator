@@ -35,7 +35,7 @@ pip install -r requirements.txt
 
 4. Make a `.env` file at `./backend/` directory and set your `OPENAI_API_KEY` at `.env` file.
 
-5. Replace the wifi ip address both at `./backend/main.py` and `./frontend/mobile_result.html` to your wifi ip address. 
+5. Replace the wifi ip address both at `./backend/main.py` (`lookbook_url`)and `./frontend/mobile_result.html` (`response`) to your wifi ip address. Enter `ipconfig getifaddr en0` at terminal, you can identify your wifi ip address (available at mac). 
 
 6. Open a terminal 1 and run the backend server.
    
