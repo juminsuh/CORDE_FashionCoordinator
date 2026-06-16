@@ -53,3 +53,5 @@ python -m http.server 8080
 7. Open a [browser](http://localhost:8080/home.html).
 
 **🥳 You are ready to use our service!**
+
+<h2>Key Function</h2>
