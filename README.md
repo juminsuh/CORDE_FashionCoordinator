@@ -9,7 +9,7 @@
 
 <h2>Introduction</h2>
 
-The fashion recommendation chatbot based on personal and TPO (Time, Place, Occasion). More detailed information is represented at the presentation [poster](./assets/pme10pannel.pdf). 
+The fashion recommendation chatbot based on personal and TPO (Time, Place, Occasion). More detailed information is represented at the [presentation poster](./assets/pme10pannel.pdf). 
 
 <h2>Setup & Run</h2>
 
