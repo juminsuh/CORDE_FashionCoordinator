@@ -9,50 +9,12 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from prompt import *
 from sentence_transformers import SentenceTransformer
-from typing import List, Dict, Any
-import base64
-import json
-import csv
-import os
-from datetime import datetime
-from pydantic import BaseModel, EmailStr
-from pathlib import Path
-
 
 
 load_dotenv('.env', override=True)
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 
-LOOKBOOK_DIR = Path("lookbooks")  # Path 객체
-SUBSCRIBERS_CSV = LOOKBOOK_DIR / "subscribers.csv"  # 정상 작동
-USER_LOOKBOOKS_DIR = LOOKBOOK_DIR / "user_lookbooks"
-LOOKBOOK_DIR.mkdir(exist_ok=True)
-USER_LOOKBOOKS_DIR.mkdir(exist_ok=True)
-
-PERSONA_MAP = {
-    1: "pme",
-    2: "nowon",
-    3: "ob",
-    4: "moyon",
-    5: "seoksa",
-    6: "promi"
-}
-
-
-NEGATIVE_MAP = {
-    "fit": {
-        1: "오버사이즈",
-        2: "슬림",
-        3: ""
-    },
-    "pattern": {
-        1: "로고",
-        2: "스트라이프",
-        3: "체크",
-        4: ""
-    }
-}
 
 GENDER_MAP = {
     "pme": "남자",
@@ -96,33 +58,6 @@ DETAIL_MAP = {
     }
     
 }
-
-# ===============================
-# 0. Utils
-# ===============================
-
-from openai import OpenAI
-import os, json, faiss, torch
-import numpy as np
-from sentence_transformers import SentenceTransformer
-
-class CapturedPage(BaseModel):
-    page_index: int
-    image_data: str  # Base64 encoded PNG
-
-class LookbookSaveRequest(BaseModel):
-    email: EmailStr
-    persona: str
-    outfit_data: Dict[str, Any]
-    captured_pages: List[CapturedPage]
-
-def tpo_to_text(tpo_val):
-    """tpo가 list/str/None 섞여 들어와도 검색쿼리에 안전하게 넣기"""
-    if tpo_val is None:
-        return ""
-    if isinstance(tpo_val, list):
-        return ", ".join([str(x) for x in tpo_val if x])
-    return str(tpo_val)
 
 def safe_join(parts):
     # "", None 제거 + 중복 제거
@@ -188,21 +123,8 @@ def load_all_dbs(style_root, tpo_root, categories):
 
     return db_cache
 
-# ===============================
-# 2. Input
-# ===============================
-
-def pick_persona():
-    persona_input = int(input(PERSONA))
-    return PERSONA_MAP[persona_input]
-
-
-def get_tpo():
-    return input("\nTPO를 입력해주세요: ").strip()
-
-
 # =============================================================================================
-# 3. OpenAI API: parse_tpo, judge_conflict, rerank_with_llm, generate_reason, update_query
+# 2. OpenAI API: parse_tpo, judge_conflict, rerank_with_llm, generate_reason, update_query
 # =============================================================================================
 
 def get_client():
@@ -396,26 +318,8 @@ def refine_tpo_text(tpo_raw: str):
     )
     return response.choices[0].message.content.strip()
 
-def update_query_with_feedback(prev_query: str, feedback_text: str):
-    print("👉 Query is being updated with feedback...")
-    client = get_client()
-    payload = {
-        "PERSONA_SUMMARY": prev_query,   # ✅ 프롬프트 문구에 맞춤
-        "user_feedback": feedback_text   # ✅ 프롬프트 문구에 맞춤
-    }
-    res = client.chat.completions.create(
-        model="gpt-4o",
-        temperature=0,
-        response_format={"type":"json_object"},
-        messages=[
-            {"role":"system", "content": UPDATE_QUERY_PROMPT},
-            {"role":"user", "content": json.dumps(payload, ensure_ascii=False)}
-        ]
-    )
-    return json.loads(res.choices[0].message.content)["updated_query"]
-
 # -------------------------------
-# 4. Retrieve
+# 3. Retrieve
 # -------------------------------
 
 def retrieve_from_faiss(persona, model, index, metas, query_text, negatives, user_gender, hard_constraints=None, topk=5):
@@ -447,39 +351,45 @@ def retrieve_from_faiss(persona, model, index, metas, query_text, negatives, use
         # ---------- sub category ----------
         if hard_constraints["forced_sub_categories"]:
             sub_cat = meta.get("sub_cat_name")
-            if sub_cat != hard_constraints["forced_sub_categories"][-1]: # 여러 개가 있을 수 있는데 마지막 걸로 
+            if sub_cat not in hard_constraints["forced_sub_categories"]:
                 continue
-        
+
         # ---------- color ----------
         if hard_constraints["preferred_colors"]:
-            color = meta.get("color")
-            main_color = color.split(", ")[0] # 주요 색상
-            
-            if not any(pref in main_color for pref in hard_constraints['preferred_colors']): # preferred colors의 요소가 color에 포함돼 있지 않으면 continue
+            main_color = (meta.get("color") or "").split(", ")[0]
+            if not any(pref in main_color for pref in hard_constraints["preferred_colors"]):
                 continue
 
         # ---------- fit ----------
         if hard_constraints["preferred_fits"]:
-            fit = meta.get("fit")
-            if fit != hard_constraints["preferred_fits"][-1]: # 여러 개가 있을 수 있는데 마지막 걸로 
+            if meta.get("fit") not in hard_constraints["preferred_fits"]:
                 continue
 
         # ---------- pattern ----------
         if hard_constraints["preferred_patterns"]:
-            pattern = meta.get("pattern")
-            if pattern != hard_constraints["preferred_patterns"][-1]: # 여러 개가 있을 수 있는데 마지막 걸로 
+            if meta.get("pattern") not in hard_constraints["preferred_patterns"]:
                 continue
 
         # ---------- texture ----------
         if hard_constraints["preferred_textures"]:
-            texture = meta.get("texture")
-            if texture != hard_constraints["preferred_textures"][-1]: # 여러 개가 있을 수 있는데 마지막 걸로 
+            if meta.get("texture") not in hard_constraints["preferred_textures"]:
                 continue
 
         # negative filter
-        if meta.get("fit") in negatives["fit"]:
+        desc = meta.get("description", "") or ""
+        name = meta.get("product_name", "") or ""
+        print(f"  [FILTER CHECK] product_id={meta.get('product_id')} | fit={meta.get('fit')} | pattern={meta.get('pattern')} | negatives_fit={negatives['fit']} | negatives_pattern={negatives['pattern']}")
+
+        fit_field = meta.get("fit") or ""
+        pattern_field = meta.get("pattern") or ""
+
+        if any(kw in fit_field for kw in negatives["fit"]):
             continue
-        if meta.get("pattern") in negatives["pattern"]:
+        if any(kw in desc or kw in name for kw in negatives["fit"]):
+            continue
+        if any(kw in pattern_field for kw in negatives["pattern"]):
+            continue
+        if any(kw in desc or kw in name for kw in negatives["pattern"]):
             continue
         if meta.get("price_raw", 0) > negatives["price_threshold"]:
             continue
@@ -522,31 +432,6 @@ def retrieve_candidates_by_category(persona, category, style_query, tpo_query, d
     )
 
     return style_items, tpo_items
-
-def print_candidates(title, items, limit=5):
-    print(f"\n--- {title} (n={len(items)}) ---")
-    for i, x in enumerate(items[:limit], 1):
-        print(
-            f"[{i}] product_id={x.get('product_id')} | "
-            f"gender={x.get('gender')} | "
-            f"price={x.get('price')} | "
-            f"tpo={x.get('tpo')} | "
-            f"style={x.get('style')} | "
-            f"fit={x.get('fit')} | "
-            f"pattern={x.get('pattern')} | "
-            f"score={x.get('score', 0):.4f}"
-        )
-
-def print_results(i, item, reason):
-    print(f"\n[{i}] product_id={item.get('product_id')}")
-    print(f"sub_cat={item.get('sub_cat_name')}")
-    print(f"color={item.get('color')}")
-    print(f"image={item.get('img_url')}")
-    print(f"price={item.get('price')}")
-    print(f"fit={item.get('fit')}")
-    print(f"pattern={item.get('pattern')}")
-    print(f"description={item.get('description')}")
-    print(f"👉 이유: {reason}")
 
 def fuse_candidates(style_items, tpo_items, conflict, topk=5):
     merged = {}
@@ -593,21 +478,6 @@ def fuse_candidates(style_items, tpo_items, conflict, topk=5):
     # 6) TOP-K item만 반환
     return [item for _, item in fused[:topk]]
 
-
-def print_fused_candidates(items, title="FUSED_CANDIDATES"):
-    print(f"\n=== {title} (n={len(items)}) ===")
-    for i, x in enumerate(items, 1):
-        print(
-            f"[{i}] product_id={x.get('product_id')} | "
-            f"sub_category={x.get('sub_cat_name')} | "
-            f"img={x.get('img_url')} |"
-            f"style={x.get('style')} | "
-            f"tpo={x.get('tpo')} | "
-            f"fit={x.get('fit')} | "
-            f"pattern={x.get('pattern')} | "
-            f"price={x.get('price')} | "
-            f"score={x.get('score', 'N/A')}"
-        )
 
 def lookup_item_by_id(product_id, candidates):
     pid = str(product_id)
@@ -670,30 +540,18 @@ def init_hard_constraints():
 
 def apply_feedback_to_constraints(feedback_obj, hard_constraints):
     intent = feedback_obj["intent"]
+    values = list(feedback_obj.get("include", []))
 
     if intent == "sub_cat_name":
-        hard_constraints["forced_sub_categories"].extend(
-            feedback_obj.get("include", [])
-        )
-
+        hard_constraints["forced_sub_categories"] = values
     elif intent == "color":
-        hard_constraints["preferred_colors"].extend(
-            feedback_obj.get("include", [])
-        )
+        hard_constraints["preferred_colors"] = values
     elif intent == "fit":
-        hard_constraints["preferred_fits"].extend(
-            feedback_obj.get("include", [])
-        )
-
+        hard_constraints["preferred_fits"] = values
     elif intent == "pattern":
-        hard_constraints["preferred_patterns"].extend(
-            feedback_obj.get("include", [])
-        )
-
+        hard_constraints["preferred_patterns"] = values
     elif intent == "texture":
-        hard_constraints["preferred_textures"].extend(
-            feedback_obj.get("include", [])
-        )
+        hard_constraints["preferred_textures"] = values
 
 def extract_category_from_input(user_input, category_map):
     clean_input = user_input.replace(" ", "")
@@ -709,85 +567,3 @@ def extract_category_from_input(user_input, category_map):
     return matched_items
 
 
-def save_lookbook_with_screenshots(
-    email: str, 
-    persona: str, 
-    outfit_data: Dict[str, Any],
-    captured_pages: List[CapturedPage]
-) -> str:
-    """룩북 데이터 및 스크린샷 저장"""
-    
-    # 타임스탬프 기반 폴더명 생성
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    user_folder = USER_LOOKBOOKS_DIR / f"user_{timestamp}"
-    user_folder.mkdir(exist_ok=True)
-    
-    print(f"📁 룩북 저장 중: {user_folder.name}")
-    
-    # 1. 룩북 메타데이터 저장 (JSON)
-    lookbook_json = user_folder / "lookbook.json"
-    with open(lookbook_json, 'w', encoding='utf-8') as f:
-        json.dump({
-            "email": email,
-            "persona": persona,
-            "timestamp": timestamp,
-            "tpo": outfit_data.get('tpo', ''),
-            "refined_tpo": outfit_data.get('refined_tpo', ''),
-            "outfit_data": outfit_data,
-            "page_count": len(captured_pages)
-        }, f, ensure_ascii=False, indent=2)
-    
-    print(f"  ✅ JSON 저장: lookbook.json")
-    
-    # 2. 캡처된 페이지 이미지 저장
-    # 페이지 이름 매핑 (커버 + 5개 카테고리)
-    page_names = ['cover', '상의', '아우터', '바지', '신발', '가방']
-    
-    for page in captured_pages:
-        idx = page.page_index
-        
-        # 파일명 생성
-        if idx < len(page_names):
-            filename = f"{idx:02d}_{page_names[idx]}.png"
-        else:
-            filename = f"{idx:02d}_page.png"
-        
-        try:
-            # Base64 디코딩 (data:image/png;base64, 부분 제거)
-            image_data = page.image_data.split(',')[1] if ',' in page.image_data else page.image_data
-            image_bytes = base64.b64decode(image_data)
-            
-            # 이미지 파일 저장
-            image_path = user_folder / filename
-            with open(image_path, 'wb') as f:
-                f.write(image_bytes)
-            
-            print(f"  ✅ 이미지 저장: {filename}")
-            
-        except Exception as e:
-            print(f"  ⚠️ 이미지 저장 실패 ({filename}): {e}")
-    
-    print(f"  ✅ 총 {len(captured_pages)}개 페이지 저장 완료\n")
-    
-    return str(user_folder.name)
-
-def save_to_csv(email: str, persona: str, tpo: str, page_count: int, folder_name: str):
-    """CSV에 구독자 정보 저장"""
-    
-    file_exists = SUBSCRIBERS_CSV.exists() and SUBSCRIBERS_CSV.stat().st_size > 0
-    
-    with open(SUBSCRIBERS_CSV, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        
-        # 헤더 추가 (파일이 비어있거나 없는 경우)
-        if not file_exists:
-            writer.writerow(['날짜', '이메일', '페르소나', 'TPO', '페이지 수', '저장 폴더'])
-        
-        writer.writerow([
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            email,
-            persona,
-            tpo,
-            page_count,
-            folder_name
-        ])

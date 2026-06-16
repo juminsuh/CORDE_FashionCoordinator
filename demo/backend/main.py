@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException, Header, Response
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
-import requests
 from urllib.parse import unquote
 from typing import List, Dict, Optional, Any
 import uvicorn
@@ -9,9 +8,6 @@ import uuid
 from datetime import datetime, timedelta
 import gc
 import torch
-import qrcode
-from io import BytesIO
-import base64
 from fastapi.middleware.cors import CORSMiddleware
 
 # 기존 utils, prompt 임포트
@@ -206,8 +202,8 @@ class TPOResponse(BaseModel):
     refined_tpo: str
 
 class NegativeRequest(BaseModel):
-    fit: Optional[str] = None
-    pattern: Optional[str] = None
+    fit: Optional[List[str]] = None
+    pattern: Optional[List[str]] = None
     price_threshold: Optional[int] = None
 
 class NegativeResponse(BaseModel):
@@ -261,21 +257,6 @@ class ShowAllResponse(BaseModel):
     selected_items: Dict[str, Any]
     total_count: int
     
-class QRCodeRequest(BaseModel):
-    outfit_data: Dict[str, Any]
-    persona: str
-    
-class QRCodeResponse(BaseModel):
-    qr_code_url: str      # Base64 QR 이미지
-    lookbook_url: str     # 모바일 접속 URL
-    outfit_id: str        # 고유 ID
-    expires_at: str       # 만료 시간 (7일)
-
-class OutfitDataResponse(BaseModel):
-    outfit_data: Dict[str, Any]
-    persona: str
-
-outfit_storage = {}
 # ===============================
 # Lifespan (startup/shutdown)
 # ===============================
@@ -447,11 +428,13 @@ async def set_negatives(request: NegativeRequest, session_id: str = Header(..., 
             raise HTTPException(status_code=400, detail="Persona not set. Call /session/persona first.")
         
         session.negatives = {
-            "fit": [request.fit] if request.fit else [],
-            "pattern": [request.pattern] if request.pattern else [],
+            "fit": request.fit or [],
+            "pattern": request.pattern or [],
             "price_threshold": request.price_threshold if request.price_threshold else 500000
         }
-        
+
+        print(f"🚫 [NEGATIVES SET] fit={session.negatives['fit']}, pattern={session.negatives['pattern']}, price_threshold={session.negatives['price_threshold']}")
+
         return NegativeResponse(
             status="negatives_set",
             negatives=session.negatives
@@ -582,7 +565,32 @@ async def recommend_next_category(session_id: str = Header(..., alias="X-Session
                 description=item.get('description')
             ))
         
-        # 🔥 핵심 수정: 현재 추천을 이전 추천에 누적 (기존 아이템 보존)
+        # fuse/rerank 후 빈 결과: LLM이 모든 후보를 부적합 판단한 경우
+        if not candidates:
+            print(f"⚠️ [{category}] LLM 리랭킹 후 적합한 아이템이 없습니다.")
+            if category in session.previous_recommendations and session.previous_recommendations[category]:
+                print(f"⚠️ [{category}] 이전 추천 결과를 복구합니다.")
+                session.recent_recommendations[category] = session.previous_recommendations[category].copy()
+                previous_candidates = list(session.previous_recommendations[category].values())
+                return CurrentRecommendResponse(
+                    category=category,
+                    category_index=session.current_category_index,
+                    total_categories=len(session.categories),
+                    candidates=previous_candidates,
+                    is_last_category=session.current_category_index == len(session.categories) - 1,
+                    is_restored_from_previous=True
+                )
+            else:
+                return CurrentRecommendResponse(
+                    category=category,
+                    category_index=session.current_category_index,
+                    total_categories=len(session.categories),
+                    candidates=[],
+                    is_last_category=session.current_category_index == len(session.categories) - 1,
+                    is_restored_from_previous=False
+                )
+
+        # 현재 추천을 이전 추천에 누적 (기존 아이템 보존)
         if category not in session.previous_recommendations:
             session.previous_recommendations[category] = {}
         
@@ -765,8 +773,6 @@ async def show_all(session_id: str = Header(..., alias="X-Session-ID")):
                 detail=f"Recommendation not complete. Current category: {current}. Continue with /recommend/next."
             )
         
-        # refined_tpo = refine_tpo_text(session.tpo_raw)
-        
         return ShowAllResponse(
             tpo=session.refined_tpo,
             selected_items=session.selected_items,
@@ -838,135 +844,6 @@ async def manual_cleanup(max_age_minutes: int = 30):
     }
 
 
-@app.post("/generate_qr", response_model=QRCodeResponse)
-async def generate_qr_code(request: QRCodeRequest):
-    """QR 코드 생성 및 outfit 데이터 저장"""
-    try:
-        # 1. 고유 ID 생성
-        outfit_id = str(uuid.uuid4())
-        
-        # 2. 데이터 저장 (7일간 유효)
-        outfit_storage[outfit_id] = {
-            "data": request.outfit_data,
-            "persona": request.persona,
-            "created_at": datetime.now()
-        }
-        
-        # 3. 모바일 룩북 URL 생성
-        # convert it to your ip address
-        lookbook_url = f"http://000.00.0.00:8000/mobile_result.html?id={outfit_id}"
-        
-        # 4. QR 코드 생성
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(lookbook_url)
-        qr.make(fit=True)
-        
-        # 5. QR 코드 이미지를 Base64로 변환
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        qr_code_url = f"data:image/png;base64,{img_str}"
-        
-        # 6. 만료 시간 계산
-        expires_at = (datetime.now() + timedelta(days=7)).isoformat()
-        
-        print(f"✅ QR 코드 생성 완료: {outfit_id}")
-        print(f"   Lookbook URL: {lookbook_url}")
-        
-        return QRCodeResponse(
-            qr_code_url=qr_code_url,
-            lookbook_url=lookbook_url,
-            outfit_id=outfit_id,
-            expires_at=expires_at
-        )
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"QR generation failed: {str(e)}")
-
-@app.get("/get_outfit/{outfit_id}", response_model=OutfitDataResponse)
-async def get_outfit_data(outfit_id: str):
-    """저장된 outfit 데이터 조회 (모바일용)"""
-    try:
-        if outfit_id not in outfit_storage:
-            raise HTTPException(status_code=404, detail="Outfit not found or expired")
-        
-        stored = outfit_storage[outfit_id]
-        
-        # 7일 만료 체크
-        age = datetime.now() - stored["created_at"]
-        if age > timedelta(days=7):
-            del outfit_storage[outfit_id]
-            raise HTTPException(status_code=410, detail="Outfit data expired (7 days limit)")
-        
-        return OutfitDataResponse(
-            outfit_data=stored["data"],
-            persona=stored["persona"]
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/mobile_result.html")
-async def serve_mobile_result():
-    """모바일 룩북 HTML 제공"""
-    from fastapi.responses import FileResponse
-    return FileResponse("../frontend/mobile_result.html")
-
-@app.get("/mobile_result.css")
-async def serve_mobile_css():
-    """모바일 룩북 CSS 제공"""
-    from fastapi.responses import FileResponse
-    return FileResponse("../frontend/mobile_result.css")
-
-@app.get("/images/{filename}")
-async def serve_images(filename: str):
-    """이미지 파일 제공"""
-    from fastapi.responses import FileResponse
-    import os
-    filepath = f"../frontend/images/{filename}"
-    if os.path.exists(filepath):
-        return FileResponse(filepath)
-    raise HTTPException(status_code=404, detail="Image not found")
-
-@app.get("/image-proxy")
-async def image_proxy(url: str):
-    """외부 이미지 프록시"""
-    try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            return Response(content=response.content, media_type=response.headers.get('content-type', 'image/jpeg'))
-        else:
-            raise HTTPException(status_code=404, detail="Image not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch image: {str(e)}")
-
-@app.delete("/admin/cleanup_outfits")
-async def cleanup_expired_outfits():
-    """관리자: 만료된 outfit 데이터 정리"""
-    now = datetime.now()
-    to_delete = []
-    
-    for outfit_id, stored in outfit_storage.items():
-        age = now - stored["created_at"]
-        if age > timedelta(days=7):
-            to_delete.append(outfit_id)
-    
-    for outfit_id in to_delete:
-        del outfit_storage[outfit_id]
-    
-    return {
-        "status": "cleanup_complete",
-        "cleaned_outfits": len(to_delete),
-        "active_outfits": len(outfit_storage)
-    }
     
 # ===============================
 # Run Server
