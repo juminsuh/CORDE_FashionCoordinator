@@ -9,7 +9,7 @@
 
 <h2>Introduction</h2>
 
-The fashion recommendation chatbot based on personal and TPO (Time, Place, Occasion). More detailed information is represented at the [presentation poster](./assets/pme10pannel.pdf). 
+The fashion r**ecommendation chatbot based on personal and TPO** (Time, Place, Occasion). More detailed information is represented at the [presentation poster](./assets/pme10pannel.pdf). 
 
 <h2>Key Features</h2>
 
@@ -24,6 +24,10 @@ The fashion recommendation chatbot based on personal and TPO (Time, Place, Occas
 5. We retrieved top-5 style-based items and TPO-based items and rerank them by prompting LLM. For overall harmonics between items, LLM rerank the retreived 10 items. If LLM determines style and TPO conflict, it reranks items, priotizing TPO. Otherwise, it reranks items with balanced weights. Finally, Lookie✨ returns top-3 items with friendly and interpretable recommendation reasons. 
 
 6. User can give a feedback if the recommended results are unsatisfactory. User can change `sub_category`, `color`, and `texture` if they want.
+
+<h2>System Architecture</h2>
+
+![Image](./pipeline.png)
 
 <h2>Results</h2>
 This result was reported during the project demo day rather than independently reproduced as a benchmark.
