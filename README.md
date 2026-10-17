@@ -27,7 +27,7 @@ The fashion recommendation chatbot based on personal and TPO (Time, Place, Occas
 
 <h2>Results</h2>
 This result was reported during the project demo day rather than independently reproduced as a benchmark.
-
+![Image](./image.png)
 
 <h2>Setup & Run</h2>
 
