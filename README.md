@@ -19,7 +19,7 @@ The fashion recommendation chatbot based on personal and TPO (Time, Place, Occas
 
 3. We constructed two databases which include style DB and TPO DB, using FAISS vectorstore. We embedded only necessary information `style_name` and `top + mood`, respectively.
 
-4. Based on user's selected persona, TPO, and negatives (fit, pattern, and price), Lookie✨ recommends items sequentially (top -> outer -> bottom -> shoes -> bag: Full Codie! 👚).
+4. Based on user's selected persona, TPO, and negatives (fit, pattern, and price), Lookie✨ recommends items sequentially (top ⭢ outer ⭢ bottom ⭢ shoes ⭢ bag: Full Codie! 👚).
 
 5. We retrieved top-5 style-based items and TPO-based items and rerank them by prompting LLM. For overall harmonics between items, LLM rerank the retreived 10 items. If LLM determines style and TPO conflict, it reranks items, priotizing TPO. Otherwise, it reranks items with balanced weights. Finally, Lookie✨ returns top-3 items with friendly and interpretable recommendation reasons. 
 
@@ -27,6 +27,7 @@ The fashion recommendation chatbot based on personal and TPO (Time, Place, Occas
 
 <h2>Results</h2>
 This result was reported during the project demo day rather than independently reproduced as a benchmark.
+
 ![Image](./image.png)
 
 <h2>Setup & Run</h2>
