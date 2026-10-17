@@ -9,30 +9,25 @@
 
 <h2>Introduction</h2>
 
-The fashion r**ecommendation chatbot based on personal and TPO** (Time, Place, Occasion). More detailed information is represented at the [presentation poster](./assets/pme10pannel.pdf). 
+CORDE is a **personalized outfit recommendation system that combines style preferences, occasion-specific context (TPO), and user feedback** to generate coordinated fashion recommendations. It leverages **FAISS-based retrieval** and **LLM reranking** to select outfits that balance personal style and situational relevance. More detailed information is represented at the [presentation poster](./assets/pme10pannel.pdf). 
 
 <h2>Key Features</h2>
 
 1. We collected item image and metadata (e.g., `sub_category`, `texture`, `pattern`, `fit`, and .etc) from [musinsa](https://www.musinsa.com/main/musinsa/recommend?skip_bf=Y&gf=A) in order to reflect trend and diverse preference of users.
-
 2. We defined 6 personas (3 for male and female respectively) based on survey, which resulted cacusal, formal, and street fashion categories. 
-
 3. We constructed two databases which include style DB and TPO DB, using FAISS vectorstore. We embedded only necessary information `style_name` and `top + mood`, respectively.
-
-4. Based on user's selected persona, TPO, and negatives (fit, pattern, and price), Lookie✨ recommends items sequentially (top ⭢ outer ⭢ bottom ⭢ shoes ⭢ bag: Full Codie! 👚).
-
-5. We retrieved top-5 style-based items and TPO-based items and rerank them by prompting LLM. For overall harmonics between items, LLM rerank the retreived 10 items. If LLM determines style and TPO conflict, it reranks items, priotizing TPO. Otherwise, it reranks items with balanced weights. Finally, Lookie✨ returns top-3 items with friendly and interpretable recommendation reasons. 
-
+4. Based on user's selected persona, TPO, and negatives (fit, pattern, and price), chatbot recommends items sequentially (top ⭢ outer ⭢ bottom ⭢ shoes ⭢ bag: Full Codie! 👚).
+5. We retrieved top-5 style-based items and TPO-based items and rerank them by prompting LLM. For overall harmonics between items, LLM rerank the retreived 10 items. If LLM determines style and TPO conflict, it reranks items, priotizing TPO. Otherwise, it reranks items with balanced weights. Finally, chatbot returns top-3 items with friendly and interpretable recommendation reasons. 
 6. User can give a feedback if the recommended results are unsatisfactory. User can change `sub_category`, `color`, and `texture` if they want.
 
 <h2>System Architecture</h2>
 
-![Image](./pipeline.png)
+![Image](./assets/pipeline.png)
 
 <h2>Results</h2>
 This result was reported during the project demo day rather than independently reproduced as a benchmark.
 
-![Image](./image.png)
+![Image](./assets/corde_result.png)
 
 <h2>Setup & Run</h2>
 
@@ -77,3 +72,11 @@ python -m http.server 8080
 
 **🥳 You are ready to use our service!**
 
+<h2>My Contribution</h2>
+
+**Minsuh Joo: Recommendation System & Backend**
+
+- **Data Collection:** Collected fashion product data to build the recommendation dataset.
+- **Data Preprocessing:** Cleaned and structured product data for embedding generation and similarity-based retrieval.
+- **Recommendation Pipeline:** Designed the end-to-end recommendation pipeline, integrating style- and TPO-based FAISS retrieval, constraint-based filtering, and LLM reranking.
+- **Backend Development:** Developed the backend to integrate the recommendation pipeline and support user requests and personalized outfit recommendations.
