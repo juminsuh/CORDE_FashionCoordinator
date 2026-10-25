@@ -76,7 +76,8 @@ python -m http.server 8080
 
 **Minsuh Joo: Recommendation System & Backend**
 
-- **Data Collection:** Collected fashion product data to build the recommendation dataset.
-- **Data Preprocessing:** Cleaned and structured product data for embedding generation and similarity-based retrieval.
-- **Recommendation Pipeline:** Designed the end-to-end recommendation pipeline, integrating style- and TPO-based FAISS retrieval, constraint-based filtering, and LLM reranking.
-- **Backend Development:** Developed the backend to integrate the recommendation pipeline and support user requests and personalized outfit recommendations.
+- **Data Collection:** Collected fashion product images and metadata from the fashion website to construct the recommendation dataset. Analyzed the DOM structure of the website's top navigation tabs to automatically extract subcategories, then systematically crawled product listings in an infinite-scroll environment based on combinations of attributes such as material and pattern.
+- **Data Preprocessing:** Cleaned and structured the collected product data for embedding generation and similarity-based retrieval. Designed a structured data schema and manually processed product information into standardized fields, including product ID, URL, category, pattern, fit, color, and other metadata.
+- **Database Construction:** Built category-specific retrieval databases to support sequential outfit recommendations across clothing types, with separate databases for style-based TPO-based retrieval. Precomputed embedding texts to enable efficient mapping during recommendation and selectively included relevant attributes to minimize noise in the embedding representations. Implemented vector-based similarity search using FAISS.
+- **Recommendation Pipeline:** Designed and implemented the end-to-end recommendation pipeline, integrating style- and TPO-based FAISS retrieval, constraint-based filtering, and LLM-based reranking. Incorporated conditional logic to handle user feedback and exceptional cases, enabling the system to adapt its recommendation flow to different interaction scenarios.
+- **Backend Development:** Developed the backend to connect user interactions with the recommendation pipeline, enabling conversational requests and personalized outfit recommendations through an integrated chat interface.
